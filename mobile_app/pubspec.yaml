@@ -1,0 +1,84 @@
+name: letters_app
+description: نظام إصدار الخطابات الرسمية للشركات - تطبيق الموبايل
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State Management - BLoC
+  flutter_bloc: ^8.1.3
+  bloc: ^8.1.2
+  equatable: ^2.0.5
+
+  # Networking
+  dio: ^5.4.0
+  retrofit: ^4.0.3
+  json_annotation: ^4.8.1
+
+  # Local Storage
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
+
+  # UI Components
+  google_fonts: ^6.1.0
+  flutter_svg: ^2.0.9
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  lottie: ^3.0.0
+  animate_do: ^3.1.2
+  flutter_staggered_animations: ^1.1.1
+  
+  # Icons
+  iconsax: ^0.0.8
+  
+  # Navigation
+  go_router: ^13.0.1
+  
+  # Forms & Validation
+  formz: ^0.6.1
+  
+  # Utils
+  intl: ^0.20.2
+  url_launcher: ^6.2.2
+  share_plus: ^7.2.1
+  path_provider: ^2.1.1
+  open_file: ^3.3.2
+  
+  # PDF
+  flutter_pdfview: ^1.3.2
+  
+  # Image Picker
+  image_picker: ^1.0.7
+  
+  # Pull to Refresh
+  pull_to_refresh: ^2.0.0
+  get_it: ^9.2.0
+  provider: ^6.1.5+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  build_runner: ^2.4.7
+  json_serializable: ^6.7.1
+  retrofit_generator: ^8.0.6
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/animations/
+
+  # Using Google Fonts package for Cairo font
+  # No local fonts needed

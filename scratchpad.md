@@ -1,5 +1,88 @@
 # نظام إصدار الخطابات الرسمية للشركات
 
+## 📱 Flutter Mobile App - API Integration Progress
+
+### ✅ تم إنجازه:
+- [x] إنشاء فرع جديد للعمل
+- [x] إنشاء Data Layer (Models, DataSources, Repositories) لجميع الـ Features
+- [x] إنشاء Domain Layer (Entities, Repositories, UseCases) لجميع الـ Features
+- [x] إنشاء BLoC للـ Features (Auth, Dashboard, Letters, Company, Templates, Recipients, Organizations, Subscriptions)
+- [x] تثبيت الحزم (flutter pub get)
+- [x] إصلاح أخطاء الصفحات الموجودة (dashboard_page, letters_page, app_router)
+- [x] إنشاء Widgets المفقودة (StatCard, QuickActionCard, RecentLettersList, AnimatedTextField, AnimatedButton)
+- [x] إصلاح أخطاء Theme (CardThemeData, DialogThemeData)
+- [x] تحديث DashboardStats entity لإضافة userName و companyName
+
+### 🔄 قيد العمل:
+- [ ] إضافة ملفات Assets الناقصة
+- [ ] اختبار التطبيق والتأكد من اكتماله
+- [ ] إنشاء PR
+
+### 📁 الملفات المُنشأة للـ Flutter:
+**Core:**
+- `core/error/failures.dart` - أنواع الأخطاء
+- `core/utils/either.dart` - Either type للنتائج
+
+**Auth Feature:**
+- `features/auth/data/models/user_model.dart`
+- `features/auth/data/datasources/auth_remote_datasource.dart`
+- `features/auth/data/repositories/auth_repository_impl.dart`
+- `features/auth/domain/repositories/auth_repository.dart`
+- `features/auth/domain/usecases/login_usecase.dart`
+- `features/auth/domain/usecases/logout_usecase.dart`
+- `features/auth/domain/usecases/get_user_usecase.dart`
+
+**Dashboard Feature:**
+- `features/dashboard/domain/entities/dashboard_stats.dart`
+- `features/dashboard/data/models/dashboard_stats_model.dart`
+- `features/dashboard/data/datasources/dashboard_remote_datasource.dart`
+- `features/dashboard/data/repositories/dashboard_repository_impl.dart`
+- `features/dashboard/domain/repositories/dashboard_repository.dart`
+- `features/dashboard/domain/usecases/get_dashboard_usecase.dart`
+- `features/dashboard/presentation/bloc/dashboard_bloc.dart`
+
+**Letters Feature:**
+- `features/letters/domain/entities/letter.dart`
+- `features/letters/data/models/letter_model.dart`
+- `features/letters/data/datasources/letters_remote_datasource.dart`
+- `features/letters/data/repositories/letters_repository_impl.dart`
+- `features/letters/domain/repositories/letters_repository.dart`
+- `features/letters/domain/usecases/get_letters_usecase.dart`
+- `features/letters/domain/usecases/create_letter_usecase.dart`
+- `features/letters/presentation/bloc/letters_bloc.dart`
+
+**Company Feature:**
+- `features/company/data/datasources/company_remote_datasource.dart`
+- `features/company/data/repositories/company_repository_impl.dart`
+- `features/company/domain/repositories/company_repository.dart`
+- `features/company/presentation/bloc/company_bloc.dart`
+
+**Templates Feature:**
+- `features/templates/data/datasources/templates_remote_datasource.dart`
+- `features/templates/data/repositories/templates_repository_impl.dart`
+- `features/templates/domain/repositories/templates_repository.dart`
+- `features/templates/presentation/bloc/templates_bloc.dart`
+
+**Recipients Feature:**
+- `features/recipients/data/datasources/recipients_remote_datasource.dart`
+- `features/recipients/data/repositories/recipients_repository_impl.dart`
+- `features/recipients/domain/repositories/recipients_repository.dart`
+- `features/recipients/presentation/bloc/recipients_bloc.dart`
+
+**Organizations Feature:**
+- `features/organizations/data/datasources/organizations_remote_datasource.dart`
+- `features/organizations/data/repositories/organizations_repository_impl.dart`
+- `features/organizations/domain/repositories/organizations_repository.dart`
+- `features/organizations/presentation/bloc/organizations_bloc.dart`
+
+**Subscriptions Feature:**
+- `features/subscriptions/data/datasources/subscriptions_remote_datasource.dart`
+- `features/subscriptions/data/repositories/subscriptions_repository_impl.dart`
+- `features/subscriptions/domain/repositories/subscriptions_repository.dart`
+- `features/subscriptions/presentation/bloc/subscriptions_bloc.dart`
+
+---
+
 ## 📊 تقرير المطابقة - 100%
 
 ### ✅ الميزات المطلوبة الأساسية (مطابقة 100%)
@@ -300,6 +383,167 @@ app/Http/Controllers/Api/
 
 ---
 
+---
+
+# 📱 تطبيق Flutter للموبايل
+
+## 📊 نسبة الإنجاز: 85% (UI جاهز - في انتظار تثبيت Flutter)
+
+## 🏗️ هيكل المشروع (Clean Architecture + BLoC)
+
+```
+mobile_app/
+├── lib/
+│   ├── main.dart                    # نقطة البداية
+│   ├── core/
+│   │   ├── config/
+│   │   │   └── app_config.dart      # إعدادات التطبيق
+│   │   ├── constants/
+│   │   │   └── app_constants.dart   # الثوابت
+│   │   ├── di/
+│   │   │   └── injection_container.dart  # Dependency Injection
+│   │   ├── network/
+│   │   │   ├── api_client.dart      # HTTP Client
+│   │   │   └── auth_interceptor.dart # Token Interceptor
+│   │   ├── router/
+│   │   │   └── app_router.dart      # GoRouter Navigation
+│   │   └── theme/
+│   │       ├── app_colors.dart      # الألوان
+│   │       └── app_theme.dart       # الثيم
+│   └── features/
+│       ├── auth/
+│       │   ├── domain/entities/user.dart
+│       │   └── presentation/
+│       │       ├── bloc/auth_bloc.dart
+│       │       └── pages/
+│       │           ├── splash_page.dart
+│       │           └── login_page.dart
+│       ├── main/
+│       │   └── presentation/pages/main_page.dart
+│       ├── dashboard/
+│       │   └── presentation/pages/dashboard_page.dart
+│       ├── letters/
+│       │   └── presentation/pages/
+│       │       ├── letters_page.dart
+│       │       ├── letter_create_page.dart
+│       │       └── letter_details_page.dart
+│       ├── templates/
+│       │   └── presentation/pages/templates_page.dart
+│       ├── company/
+│       │   └── presentation/pages/company_settings_page.dart
+│       ├── subscriptions/
+│       │   └── presentation/pages/subscriptions_page.dart
+│       ├── recipients/
+│       │   └── presentation/pages/recipients_page.dart
+│       ├── organizations/
+│       │   └── presentation/pages/organizations_page.dart
+│       ├── recipient_titles/
+│       │   └── presentation/pages/recipient_titles_page.dart
+│       └── letter_subjects/
+│           └── presentation/pages/letter_subjects_page.dart
+├── assets/
+│   ├── images/
+│   ├── icons/
+│   ├── animations/
+│   └── fonts/
+└── pubspec.yaml
+```
+
+## 📦 الحزم المستخدمة
+
+```yaml
+dependencies:
+  flutter_bloc: ^8.1.3          # State Management
+  dio: ^5.3.3                   # HTTP Client
+  retrofit: ^4.0.3              # API Generator
+  json_serializable: ^6.7.1     # JSON Serialization
+  flutter_secure_storage: ^9.0.0 # Secure Token Storage
+  shared_preferences: ^2.2.2    # Local Storage
+  go_router: ^12.1.1            # Navigation
+  google_fonts: ^6.1.0          # Cairo Font
+  lottie: ^2.7.0                # Animations
+  animate_do: ^3.1.2            # UI Animations
+  iconsax: ^0.0.8               # Icons
+  get_it: ^7.6.4                # Dependency Injection
+  equatable: ^2.0.5             # State Comparison
+  share_plus: ^7.2.1            # Share Content
+  flutter_staggered_animations: ^1.1.1 # List Animations
+```
+
+## 🎨 الصفحات المُنشأة (مع Animations)
+
+| الصفحة | الملف | الحالة |
+|--------|-------|--------|
+| Splash Screen | `splash_page.dart` | ✅ |
+| تسجيل الدخول | `login_page.dart` | ✅ |
+| الصفحة الرئيسية | `main_page.dart` | ✅ |
+| لوحة التحكم | `dashboard_page.dart` | ✅ |
+| قائمة الخطابات | `letters_page.dart` | ✅ |
+| إنشاء خطاب | `letter_create_page.dart` | ✅ |
+| تفاصيل الخطاب | `letter_details_page.dart` | ✅ |
+| القوالب | `templates_page.dart` | ✅ |
+| إعدادات الشركة | `company_settings_page.dart` | ✅ |
+| الاشتراكات | `subscriptions_page.dart` | ✅ |
+| المستلمين | `recipients_page.dart` | ✅ |
+| الجهات | `organizations_page.dart` | ✅ |
+| صفات المستلمين | `recipient_titles_page.dart` | ✅ |
+| مواضيع الخطابات | `letter_subjects_page.dart` | ✅ |
+
+## 🔧 إعدادات API
+
+```dart
+// lib/core/config/app_config.dart
+class AppConfig {
+  static const String baseUrl = 'http://localhost:8000/api';
+  // ⚠️ تغيير localhost إلى IP السيرفر للموبايل
+  // مثال: 'http://192.168.1.100:8000/api'
+  
+  static const String tokenKey = 'auth_token';
+  static const int connectTimeout = 30000;
+  static const int receiveTimeout = 30000;
+}
+```
+
+## 🚀 خطوات تشغيل تطبيق الموبايل
+
+```bash
+# 1. الانتقال لمجلد التطبيق
+cd mobile_app
+
+# 2. تثبيت الحزم
+flutter pub get
+
+# 3. توليد ملفات JSON
+flutter pub run build_runner build --delete-conflicting-outputs
+
+# 4. تشغيل التطبيق
+flutter run
+```
+
+## ⚠️ ملاحظات مهمة
+
+1. **تغيير Base URL**: يجب تغيير `localhost` إلى IP السيرفر الفعلي
+2. **الأخطاء الحالية**: أخطاء lint بسبب عدم تثبيت Flutter SDK (طبيعية)
+3. **RTL**: التطبيق مُعد للغة العربية (RTL) بالكامل
+4. **Animations**: جميع الصفحات تحتوي على animations باستخدام animate_do
+5. **Theme**: الألوان والتصميم مطابق لتصميم الويب
+
+## 🔗 ربط API
+
+التطبيق جاهز للربط مع الـ 68 endpoint المتوفرة في Laravel API:
+- المصادقة (6 endpoints)
+- لوحة التحكم (2 endpoints)
+- الخطابات (12 endpoints)
+- الشركة (8 endpoints)
+- القوالب (7 endpoints)
+- المستلمين (7 endpoints)
+- الجهات (7 endpoints)
+- صفات المستلمين (7 endpoints)
+- مواضيع الخطابات (7 endpoints)
+- الاشتراكات (5 endpoints)
+
+---
+
 ## Lessons
 
 - Laravel 10 مع PHP 8.1+
@@ -308,3 +552,7 @@ app/Http/Controllers/Api/
 - خوارزمية تحويل التاريخ الهجري مدمجة
 - قاعدة البيانات: erp
 - Laravel Sanctum للـ API Authentication
+- Flutter مع Clean Architecture + BLoC
+- animate_do للـ UI Animations
+- GoRouter للـ Navigation
+- GetIt للـ Dependency Injection
