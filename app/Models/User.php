@@ -18,7 +18,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'access_level',
+        'company_id',
+        'name',
+        'job_title',
+        'email',
+        'phone',
+        'password',
+        'access_level',
+        'role',
     ];
 
     /**
@@ -39,4 +46,36 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * العلاقة مع الشركة
+     */
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * العلاقة مع الخطابات
+     */
+    public function letters()
+    {
+        return $this->hasMany(Letter::class, 'author_id');
+    }
+
+    /**
+     * التحقق من صلاحية الأدمن
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin' || $this->access_level == 1;
+    }
+
+    /**
+     * التحقق من صلاحية المدير
+     */
+    public function isManager(): bool
+    {
+        return $this->role === 'manager' || $this->isAdmin();
+    }
 }

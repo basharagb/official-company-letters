@@ -1,30 +1,91 @@
 @extends('layouts.template')
-@section('title', 'Letters')
+@section('title', 'نظام إصدار الخطابات الرسمية')
 
 @section('content')
+  <div class="container">
+    <div class="px-4 py-5 my-5 text-center">
+      <div class="mb-4">
+        <i class="bi bi-envelope-paper display-1 text-primary"></i>
+      </div>
+      <h1 class="display-4 fw-bold text-primary mb-3">نظام إصدار الخطابات الرسمية</h1>
+      <div class="col-lg-8 mx-auto">
+        <p class="lead mb-4 text-muted">
+          منصة إلكترونية متكاملة تساعد الشركات على إنشاء الخطابات الرسمية بسرعة وبشكل احترافي،
+          مع أرشفة كاملة ونظام بحث وإرسال مباشر للخطابات.
+        </p>
 
-<div class="px-4 py-5 my-5 text-center">
-    <img class="d-block mx-auto mb-4" src="https://bytewebster.com/img/logo.png" alt="" width="72" height="">
-    <h1 class="display-5 fw-bold text-body-emphasis">Letter Management System</h1>
-    <div class="col-lg-6 mx-auto">
-      <p class="lead mb-4">
-        © 2023 Vivek Pandey. All rights reserved. This Letter Management System and its contents are the intellectual property of Vivek Pandey and may not be reproduced or used without permission.
-      </p>
-      @if ( strlen(Auth::user()?->name)>0)
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <a href="{{ route('dashboard') }}" class="btn btn-primary btn-lg px-4 gap-3"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            <form action="{{ route('logout') }}" method="POST">
-              @csrf
-              <button class="btn btn-danger btn-lg px-4 gap-3" onclick="return confirm('Are You Sure you want to logout?')" type="submit"><i class="bi bi-box-arrow-right"></i> Logout</button>
-            </form>
+        @auth
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a href="{{ route('dashboard') }}" class="btn btn-primary btn-lg px-5">
+              <i class="bi bi-speedometer2"></i> لوحة التحكم
+            </a>
+          </div>
+        @else
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a class="btn btn-primary btn-lg px-5" href="{{ route('login') }}">
+              <i class="bi bi-box-arrow-in-right"></i> تسجيل الدخول
+            </a>
+          </div>
+        @endauth
+      </div>
+
+      <!-- المميزات -->
+      <div class="row mt-5 g-4">
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <i class="bi bi-hash display-4 text-primary"></i>
+              <h5 class="mt-3">ترقيم تلقائي</h5>
+              <p class="text-muted">رقم صادر فريد تلقائي لكل خطاب</p>
+            </div>
+          </div>
         </div>
-      @else
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <a class="btn btn-primary btn-lg px-4 gap-3" href="{{ route('register') }}">Register</a>&nbsp;
-            <a class="btn btn-outline-secondary btn-lg px-4" href="{{ route('login') }}">Login</a>
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <i class="bi bi-calendar3 display-4 text-success"></i>
+              <h5 class="mt-3">تاريخ هجري/ميلادي</h5>
+              <p class="text-muted">إدراج التاريخ تلقائياً عند الإنشاء</p>
+            </div>
+          </div>
         </div>
-      @endif
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <i class="bi bi-search display-4 text-info"></i>
+              <h5 class="mt-3">بحث ذكي</h5>
+              <p class="text-muted">البحث بالرقم، العنوان، التاريخ، المحتوى</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <i class="bi bi-file-pdf display-4 text-danger"></i>
+              <h5 class="mt-3">تصدير PDF</h5>
+              <p class="text-muted">تصدير وحفظ الخطابات بصيغة PDF</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <i class="bi bi-share display-4 text-warning"></i>
+              <h5 class="mt-3">مشاركة متعددة</h5>
+              <p class="text-muted">إيميل، واتساب، تيليجرام، رابط</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <i class="bi bi-archive display-4 text-secondary"></i>
+              <h5 class="mt-3">أرشفة متكاملة</h5>
+              <p class="text-muted">حفظ جميع الخطابات بشكل منظم</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-    
 @endsection

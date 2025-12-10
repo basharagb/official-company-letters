@@ -2,105 +2,314 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Helpers\HijriDate;
 use App\Models\Letter;
+use App\Models\LetterTemplate;
 use App\Models\LetterVersion;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Recipient;
+use App\Models\Organization;
+use App\Models\RecipientTitle;
+use App\Models\LetterSubject;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class LetterController extends Controller
 {
+    /**
+     * عرض صفحة إنشاء خطاب جديد
+     */
     public function create()
     {
-        return view('letters.create');
+        $companyId = Auth::user()->company_id;
+
+        $templates = LetterTemplate::where('company_id', $companyId)
+            ->where('is_active', true)
+            ->get();
+
+        // جلب البيانات المحفوظة للاختيار
+        $recipients = Recipient::where('company_id', $companyId)
+            ->active()
+            ->orderBy('name')
+            ->get();
+
+        $organizations = Organization::where('company_id', $companyId)
+            ->active()
+            ->orderBy('name')
+            ->get();
+
+        $recipientTitles = RecipientTitle::where('company_id', $companyId)
+            ->active()
+            ->orderBy('title')
+            ->get();
+
+        $letterSubjects = LetterSubject::where('company_id', $companyId)
+            ->active()
+            ->orderBy('subject')
+            ->get();
+        
+        return view('letters.create', compact(
+            'templates',
+            'recipients',
+            'organizations',
+            'recipientTitles',
+            'letterSubjects'
+        ));
     }
 
+    /**
+     * حفظ خطاب جديد
+     */
     public function store(Request $request)
     {
-        $letter = new Letter;
-        $letter->subject = $request->input('subject');
-        $letter->content = $request->input('content');
-        $letter->author_id = auth()->id();
-        $letter->creation_date = now();
-        $letter->text_color = 'red';
-        $letter->save();
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'content' => 'required|string',
+            'recipient_name' => 'nullable|string|max:255',
+            'recipient_title' => 'nullable|string|max:255',
+            'recipient_organization' => 'nullable|string|max:255',
+            'template_id' => 'nullable|exists:letter_templates,id',
+        ]);
 
-        $version = new LetterVersion;
-        $version->letter_id = $letter->id;
-        $version->editor_id = auth()->id();
-        $version->edited_date = now();
-        $version->version_number = 1;
-        $version->content = $letter->content;
-        $version->save();
+        $company = Auth::user()->company;
+        
+        // توليد رقم الصادر التلقائي
+        $referenceNumber = $company->getNextReferenceNumber();
+        
+        // التاريخ الميلادي والهجري
+        $gregorianDate = Carbon::now();
+        $hijriDate = HijriDate::toHijri($gregorianDate);
 
-        return redirect('/letters/create')->with('success', 'Letter created successfully.');
+        $letter = Letter::create([
+            'company_id' => $company->id,
+            'reference_number' => $referenceNumber,
+            'subject' => $request->subject,
+            'recipient_name' => $request->recipient_name,
+            'recipient_title' => $request->recipient_title,
+            'recipient_organization' => $request->recipient_organization,
+            'content' => $request->content,
+            'author_id' => Auth::id(),
+            'creation_date' => $gregorianDate,
+            'gregorian_date' => $gregorianDate,
+            'hijri_date' => $hijriDate,
+            'template_id' => $request->template_id,
+            'styles' => $request->styles ?? [],
+            'status' => 'draft',
+        ]);
+
+        // حفظ الإصدار الأول
+        LetterVersion::create([
+            'letter_id' => $letter->id,
+            'editor_id' => Auth::id(),
+            'edited_date' => now(),
+            'version_number' => 1,
+            'content' => $letter->content,
+        ]);
+
+        return redirect()->route('letters.show', $letter->id)
+            ->with('success', 'تم إنشاء الخطاب بنجاح. رقم الصادر: ' . $referenceNumber);
     }
 
-    public function edit($id)
+    /**
+     * عرض خطاب محدد
+     */
+    public function show($id)
     {
-        try {
-            $letter = Letter::findOrFail($id);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect('/dashboard')->with('error', 'Letter not found.');
+        $letter = Letter::with(['author', 'company', 'versions'])->findOrFail($id);
+        
+        // التحقق من الصلاحية
+        if ($letter->company_id != Auth::user()->company_id) {
+            abort(403, 'غير مصرح لك بعرض هذا الخطاب');
         }
 
-        return view('letters.edit', compact('letter'));
+        return view('letters.show', compact('letter'));
     }
 
+    /**
+     * عرض صفحة تعديل الخطاب
+     */
+    public function edit($id)
+    {
+        $letter = Letter::findOrFail($id);
+        
+        if ($letter->author_id != Auth::id() && !Auth::user()->isAdmin()) {
+            return redirect()->route('dashboard')->with('error', 'غير مصرح لك بتعديل هذا الخطاب');
+        }
+
+        $templates = LetterTemplate::where('company_id', Auth::user()->company_id)
+            ->where('is_active', true)
+            ->get();
+
+        return view('letters.edit', compact('letter', 'templates'));
+    }
+
+    /**
+     * تحديث الخطاب
+     */
     public function update(Request $request, $id)
     {
         $letter = Letter::findOrFail($id);
 
-        // Check if logged-in user is the author of the letter
-        if ($letter->author_id != Auth::id()) {
-            return redirect('/dashboard')->with('error', 'You are not authorized to edit this letter.');
+        if ($letter->author_id != Auth::id() && !Auth::user()->isAdmin()) {
+            return redirect()->route('dashboard')->with('error', 'غير مصرح لك بتعديل هذا الخطاب');
         }
 
-        $version = new LetterVersion();
-        $version->letter_id = $letter->id;
-        $version->content = $letter->content;
-        $version->editor_id = Auth::id(); 
-        $version->edited_date = Carbon::now();
-        $version->version = $letter->versions->max('version') + 1;
-        $version->save();
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
 
-        $letter->subject = $request->input('subject');
-        $letter->content = $request->input('content');
-        $letter->highlight_color = 'red';
-        $letter->current_version = $version->version;
-        $letter->save();
+        // حفظ الإصدار السابق
+        $newVersion = $letter->versions()->max('version_number') + 1;
+        LetterVersion::create([
+            'letter_id' => $letter->id,
+            'editor_id' => Auth::id(),
+            'edited_date' => now(),
+            'version_number' => $newVersion,
+            'content' => $request->content,
+        ]);
 
-        return redirect('/dashboard')->with('success', 'Letter Updated successfully.');
+        $letter->update([
+            'subject' => $request->subject,
+            'content' => $request->content,
+            'recipient_name' => $request->recipient_name,
+            'recipient_title' => $request->recipient_title,
+            'recipient_organization' => $request->recipient_organization,
+        ]);
+
+        return redirect()->route('letters.show', $letter->id)
+            ->with('success', 'تم تحديث الخطاب بنجاح');
     }
 
-    public function adminedit($id)
-    {
-        $letter = Letter::find($id);
-        return view('letters.admin-edit', ['letter' => $letter]);
-    }
-
-    public function adminUpdate(Request $request, $id)
+    /**
+     * إصدار الخطاب (تغيير الحالة)
+     */
+    public function issue($id)
     {
         $letter = Letter::findOrFail($id);
+        $letter->update(['status' => 'issued']);
+        
+        // توليد PDF
+        $this->generatePdf($letter);
 
-        // Create new version
-        $version = new LetterVersion();
-        $version->letter_id = $letter->id;
-        $version->content = $request->input('content');
-        $version->editor_id = Auth::id();
-        $version->edited_date = Carbon::now();
-        $version->version = $letter->versions->max('version') + 1;
-        $version->save();
-
-        // Update letter
-        $letter->subject = $request->input('subject');
-        $letter->content = $request->input('content');
-        $letter->highlight_color = 'green';
-        $letter->current_version = $version->version;
-        $letter->save();
-
-        return redirect('letters')->with('success', 'User Letter Updated successfully.');
+        return redirect()->route('letters.show', $letter->id)
+            ->with('success', 'تم إصدار الخطاب بنجاح');
     }
 
+    /**
+     * تصدير الخطاب كـ PDF
+     */
+    public function exportPdf($id)
+    {
+        $letter = Letter::with(['author', 'company'])->findOrFail($id);
+        
+        $pdf = Pdf::loadView('letters.pdf', compact('letter'));
+        $pdf->setPaper('A4');
+        
+        return $pdf->download("letter-{$letter->reference_number}.pdf");
+    }
 
+    /**
+     * توليد وحفظ PDF
+     */
+    private function generatePdf(Letter $letter)
+    {
+        $letter->load(['author', 'company']);
+        
+        $pdf = Pdf::loadView('letters.pdf', compact('letter'));
+        $pdfPath = "letters/pdf/{$letter->reference_number}.pdf";
+        
+        Storage::disk('public')->put($pdfPath, $pdf->output());
+        
+        $letter->update(['pdf_path' => $pdfPath]);
+    }
+
+    /**
+     * عرض خطاب عبر رابط المشاركة
+     */
+    public function share($token)
+    {
+        $letter = Letter::where('share_token', $token)
+            ->with(['author', 'company'])
+            ->firstOrFail();
+
+        return view('letters.share', compact('letter'));
+    }
+
+    /**
+     * إرسال الخطاب بالبريد الإلكتروني
+     */
+    public function sendEmail(Request $request, $id)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'message' => 'nullable|string',
+        ]);
+
+        $letter = Letter::with(['author', 'company'])->findOrFail($id);
+        
+        // توليد PDF إذا لم يكن موجوداً
+        if (!$letter->pdf_path) {
+            $this->generatePdf($letter);
+            $letter->refresh();
+        }
+
+        // إرسال البريد
+        Mail::send('emails.letter', [
+            'letter' => $letter,
+            'customMessage' => $request->message,
+        ], function ($mail) use ($request, $letter) {
+            $mail->to($request->email)
+                ->subject('خطاب رسمي: ' . $letter->subject)
+                ->attach(Storage::disk('public')->path($letter->pdf_path));
+        });
+
+        $letter->update(['status' => 'sent']);
+
+        return redirect()->route('letters.show', $letter->id)
+            ->with('success', 'تم إرسال الخطاب بنجاح إلى ' . $request->email);
+    }
+
+    /**
+     * نسخ رابط المشاركة
+     */
+    public function getShareLink($id)
+    {
+        $letter = Letter::findOrFail($id);
+        
+        return response()->json([
+            'link' => $letter->share_url,
+        ]);
+    }
+
+    /**
+     * البحث في الخطابات
+     */
+    public function search(Request $request)
+    {
+        $query = Letter::where('company_id', Auth::user()->company_id)
+            ->with(['author']);
+
+        // البحث النصي
+        if ($request->filled('q')) {
+            $query->search($request->q);
+        }
+
+        // فلترة بالتاريخ
+        if ($request->filled('from') || $request->filled('to')) {
+            $query->dateRange($request->from, $request->to);
+        }
+
+        // فلترة بالحالة
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $letters = $query->orderBy('created_at', 'desc')->paginate(20);
+
+        return view('letters.search', compact('letters'));
+    }
 }
