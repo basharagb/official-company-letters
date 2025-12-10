@@ -1,0 +1,829 @@
+{
+	"info": {
+		"_postman_id": "letters-api-collection",
+		"name": "Official Company Letters API",
+		"description": "Complete API collection for Official Company Letters Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"company_name\": \"My Company\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.token) {",
+									"    pm.environment.set(\"auth_token\", jsonData.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/user",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "user"]
+						}
+					}
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Updated\",\n    \"email\": \"john@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "profile"]
+						}
+					}
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"current_password\": \"password123\",\n    \"password\": \"newpassword123\",\n    \"password_confirmation\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "password"]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "logout"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Dashboard",
+			"item": [
+				{
+					"name": "Get Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/dashboard",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dashboard"]
+						}
+					}
+				},
+				{
+					"name": "Quick Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/dashboard/quick-stats",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dashboard", "quick-stats"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Letters",
+			"item": [
+				{
+					"name": "List Letters",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/letters?search=&status=&per_page=20",
+							"host": ["{{base_url}}"],
+							"path": ["api", "letters"],
+							"query": [
+								{
+									"key": "search",
+									"value": ""
+								},
+								{
+									"key": "status",
+									"value": ""
+								},
+								{
+									"key": "per_page",
+									"value": "20"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Create Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/letters/create-data",
+							"host": ["{{base_url}}"],
+							"path": ["api", "letters", "create-data"]
+						}
+					}
+				},
+				{
+					"name": "Create Letter",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subject\": \"خطاب رسمي\",\n    \"content\": \"محتوى الخطاب هنا\",\n    \"recipient_name\": \"المستلم\",\n    \"recipient_title\": \"المدير العام\",\n    \"recipient_organization\": \"الشركة المستلمة\",\n    \"template_id\": null\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/letters",
+							"host": ["{{base_url}}"],
+							"path": ["api", "letters"]
+						}
+					}
+				},
+				{
+					"name": "Get Letter",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/letters/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "letters", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Letter",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"subject\": \"خطاب محدث\",\n    \"content\": \"محتوى محدث\",\n    \"recipient_name\": \"المستلم المحدث\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/letters/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "letters", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Letter",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/letters/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "letters", "1"]
+						}
+					}
+				},
+				{
+					"name": "Issue Letter",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/letters/1/issue",
+							"host": ["{{base_url}}"],
+							"path": ["api", "letters", "1", "issue"]
+						}
+					}
+				},
+				{
+					"name": "Get PDF URL",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/letters/1/pdf-url",
+							"host": ["{{base_url}}"],
+							"path": ["api", "letters", "1", "pdf-url"]
+						}
+					}
+				},
+				{
+					"name": "Get Share Link",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/letters/1/share-link",
+							"host": ["{{base_url}}"],
+							"path": ["api", "letters", "1", "share-link"]
+						}
+					}
+				},
+				{
+					"name": "Send Email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"recipient@example.com\",\n    \"message\": \"رسالة مرفقة مع الخطاب\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/letters/1/send-email",
+							"host": ["{{base_url}}"],
+							"path": ["api", "letters", "1", "send-email"]
+						}
+					}
+				},
+				{
+					"name": "Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/letters/statistics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "letters", "statistics"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Company",
+			"item": [
+				{
+					"name": "Get Company",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/company",
+							"host": ["{{base_url}}"],
+							"path": ["api", "company"]
+						}
+					}
+				},
+				{
+					"name": "Update Company",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"شركة محدثة\",\n    \"name_en\": \"Updated Company\",\n    \"address\": \"العنوان\",\n    \"phone\": \"0501234567\",\n    \"email\": \"info@company.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/company",
+							"host": ["{{base_url}}"],
+							"path": ["api", "company"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Templates",
+			"item": [
+				{
+					"name": "List Templates",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/templates",
+							"host": ["{{base_url}}"],
+							"path": ["api", "templates"]
+						}
+					}
+				},
+				{
+					"name": "Active Templates",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/templates/active",
+							"host": ["{{base_url}}"],
+							"path": ["api", "templates", "active"]
+						}
+					}
+				},
+				{
+					"name": "Create Template",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"قالب رسمي\",\n    \"content\": \"محتوى القالب\",\n    \"styles\": {}\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/templates",
+							"host": ["{{base_url}}"],
+							"path": ["api", "templates"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Recipients",
+			"item": [
+				{
+					"name": "List Recipients",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/recipients",
+							"host": ["{{base_url}}"],
+							"path": ["api", "recipients"]
+						}
+					}
+				},
+				{
+					"name": "Create Recipient",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"أحمد محمد\",\n    \"email\": \"ahmed@example.com\",\n    \"phone\": \"0501234567\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/recipients",
+							"host": ["{{base_url}}"],
+							"path": ["api", "recipients"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Organizations",
+			"item": [
+				{
+					"name": "List Organizations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/organizations",
+							"host": ["{{base_url}}"],
+							"path": ["api", "organizations"]
+						}
+					}
+				},
+				{
+					"name": "Create Organization",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"وزارة التعليم\",\n    \"address\": \"الرياض\",\n    \"phone\": \"0112345678\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/organizations",
+							"host": ["{{base_url}}"],
+							"path": ["api", "organizations"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Subscriptions",
+			"item": [
+				{
+					"name": "Current Subscription",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/subscriptions/current",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscriptions", "current"]
+						}
+					}
+				},
+				{
+					"name": "Available Plans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/subscriptions/plans",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscriptions", "plans"]
+						}
+					}
+				},
+				{
+					"name": "Subscribe",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"plan\": \"monthly\",\n    \"payment_method\": \"credit_card\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/subscriptions/subscribe",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subscriptions", "subscribe"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

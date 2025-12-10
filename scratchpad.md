@@ -112,6 +112,194 @@ php artisan storage:link
 php artisan serve
 ```
 
+---
+
+# 📱 تقرير API لتطبيق الموبايل (Flutter)
+
+## 📊 نسبة الإنجاز: 100%
+
+تم إنشاء API كامل يغطي جميع وظائف الويب، جاهز للاستخدام مع تطبيق Flutter.
+
+## 🔗 Base URL
+```
+http://localhost:8000/api
+```
+
+## 📋 جدول API Endpoints الكامل
+
+### 1. المصادقة (Authentication) - 6 endpoints ✅
+
+| Method | Endpoint | الوصف | Auth |
+|--------|----------|-------|------|
+| POST | `/api/auth/register` | تسجيل مستخدم جديد | ❌ |
+| POST | `/api/auth/login` | تسجيل الدخول | ❌ |
+| POST | `/api/auth/logout` | تسجيل الخروج | ✅ |
+| GET | `/api/auth/user` | بيانات المستخدم الحالي | ✅ |
+| PUT | `/api/auth/profile` | تحديث الملف الشخصي | ✅ |
+| PUT | `/api/auth/password` | تغيير كلمة المرور | ✅ |
+
+### 2. لوحة التحكم (Dashboard) - 2 endpoints ✅
+
+| Method | Endpoint | الوصف |
+|--------|----------|-------|
+| GET | `/api/dashboard` | إحصائيات لوحة التحكم الكاملة |
+| GET | `/api/dashboard/quick-stats` | إحصائيات سريعة |
+
+### 3. الخطابات (Letters) - 12 endpoints ✅
+
+| Method | Endpoint | الوصف |
+|--------|----------|-------|
+| GET | `/api/letters` | قائمة الخطابات (مع بحث وفلترة) |
+| GET | `/api/letters/create-data` | بيانات إنشاء خطاب (قوالب، مستلمين، إلخ) |
+| GET | `/api/letters/statistics` | إحصائيات الخطابات |
+| POST | `/api/letters` | إنشاء خطاب جديد |
+| GET | `/api/letters/{id}` | عرض خطاب محدد |
+| PUT | `/api/letters/{id}` | تحديث خطاب |
+| DELETE | `/api/letters/{id}` | حذف خطاب |
+| POST | `/api/letters/{id}/issue` | إصدار الخطاب |
+| GET | `/api/letters/{id}/pdf` | تحميل PDF |
+| GET | `/api/letters/{id}/pdf-url` | رابط PDF |
+| GET | `/api/letters/{id}/share-link` | رابط المشاركة |
+| POST | `/api/letters/{id}/send-email` | إرسال بالبريد |
+
+### 4. إعدادات الشركة (Company) - 8 endpoints ✅
+
+| Method | Endpoint | الوصف |
+|--------|----------|-------|
+| GET | `/api/company` | بيانات الشركة |
+| PUT | `/api/company` | تحديث بيانات الشركة |
+| POST | `/api/company/logo` | رفع الشعار |
+| POST | `/api/company/signature` | رفع التوقيع |
+| POST | `/api/company/stamp` | رفع الختم |
+| DELETE | `/api/company/logo` | حذف الشعار |
+| DELETE | `/api/company/signature` | حذف التوقيع |
+| DELETE | `/api/company/stamp` | حذف الختم |
+
+### 5. القوالب (Templates) - 7 endpoints ✅
+
+| Method | Endpoint | الوصف |
+|--------|----------|-------|
+| GET | `/api/templates` | قائمة القوالب |
+| GET | `/api/templates/active` | القوالب النشطة |
+| POST | `/api/templates` | إنشاء قالب |
+| GET | `/api/templates/{id}` | عرض قالب |
+| PUT | `/api/templates/{id}` | تحديث قالب |
+| DELETE | `/api/templates/{id}` | حذف قالب |
+| POST | `/api/templates/{id}/toggle-active` | تفعيل/إلغاء |
+
+### 6. المستلمين (Recipients) - 7 endpoints ✅
+
+| Method | Endpoint | الوصف |
+|--------|----------|-------|
+| GET | `/api/recipients` | قائمة المستلمين |
+| GET | `/api/recipients/active` | المستلمين النشطين |
+| POST | `/api/recipients` | إضافة مستلم |
+| GET | `/api/recipients/{id}` | عرض مستلم |
+| PUT | `/api/recipients/{id}` | تحديث مستلم |
+| DELETE | `/api/recipients/{id}` | حذف مستلم |
+| POST | `/api/recipients/{id}/toggle-active` | تفعيل/إلغاء |
+
+### 7. الجهات (Organizations) - 7 endpoints ✅
+
+| Method | Endpoint | الوصف |
+|--------|----------|-------|
+| GET | `/api/organizations` | قائمة الجهات |
+| GET | `/api/organizations/active` | الجهات النشطة |
+| POST | `/api/organizations` | إضافة جهة |
+| GET | `/api/organizations/{id}` | عرض جهة |
+| PUT | `/api/organizations/{id}` | تحديث جهة |
+| DELETE | `/api/organizations/{id}` | حذف جهة |
+| POST | `/api/organizations/{id}/toggle-active` | تفعيل/إلغاء |
+
+### 8. صفات المستلمين (Recipient Titles) - 7 endpoints ✅
+
+| Method | Endpoint | الوصف |
+|--------|----------|-------|
+| GET | `/api/recipient-titles` | قائمة الصفات |
+| GET | `/api/recipient-titles/active` | الصفات النشطة |
+| POST | `/api/recipient-titles` | إضافة صفة |
+| GET | `/api/recipient-titles/{id}` | عرض صفة |
+| PUT | `/api/recipient-titles/{id}` | تحديث صفة |
+| DELETE | `/api/recipient-titles/{id}` | حذف صفة |
+| POST | `/api/recipient-titles/{id}/toggle-active` | تفعيل/إلغاء |
+
+### 9. مواضيع الخطابات (Letter Subjects) - 7 endpoints ✅
+
+| Method | Endpoint | الوصف |
+|--------|----------|-------|
+| GET | `/api/letter-subjects` | قائمة المواضيع |
+| GET | `/api/letter-subjects/active` | المواضيع النشطة |
+| POST | `/api/letter-subjects` | إضافة موضوع |
+| GET | `/api/letter-subjects/{id}` | عرض موضوع |
+| PUT | `/api/letter-subjects/{id}` | تحديث موضوع |
+| DELETE | `/api/letter-subjects/{id}` | حذف موضوع |
+| POST | `/api/letter-subjects/{id}/toggle-active` | تفعيل/إلغاء |
+
+### 10. الاشتراكات (Subscriptions) - 5 endpoints ✅
+
+| Method | Endpoint | الوصف |
+|--------|----------|-------|
+| GET | `/api/subscriptions/current` | الاشتراك الحالي |
+| GET | `/api/subscriptions/plans` | الباقات المتاحة |
+| POST | `/api/subscriptions/subscribe` | الاشتراك في باقة |
+| POST | `/api/subscriptions/cancel` | إلغاء الاشتراك |
+| GET | `/api/subscriptions/history` | سجل الاشتراكات |
+
+---
+
+## 📈 ملخص الإحصائيات
+
+| القسم | عدد Endpoints |
+|-------|---------------|
+| المصادقة | 6 |
+| لوحة التحكم | 2 |
+| الخطابات | 12 |
+| الشركة | 8 |
+| القوالب | 7 |
+| المستلمين | 7 |
+| الجهات | 7 |
+| صفات المستلمين | 7 |
+| مواضيع الخطابات | 7 |
+| الاشتراكات | 5 |
+| **المجموع** | **68 endpoint** |
+
+## 🔐 المصادقة (Authentication)
+
+يستخدم النظام **Laravel Sanctum** للمصادقة:
+
+```dart
+// Flutter - Headers
+headers: {
+  'Authorization': 'Bearer $token',
+  'Accept': 'application/json',
+  'Content-Type': 'application/json',
+}
+```
+
+## 📁 ملفات API Controllers
+
+```
+app/Http/Controllers/Api/
+├── AuthController.php
+├── DashboardApiController.php
+├── LetterApiController.php
+├── CompanyApiController.php
+├── TemplateApiController.php
+├── RecipientApiController.php
+├── OrganizationApiController.php
+├── RecipientTitleApiController.php
+├── LetterSubjectApiController.php
+└── SubscriptionApiController.php
+```
+
+## ✅ التزامن بين الويب والموبايل
+
+- نفس قاعدة البيانات
+- نفس المنطق البرمجي
+- أي تعديل من الويب أو الموبايل ينعكس على الاثنين
+
+---
+
 ## Lessons
 
 - Laravel 10 مع PHP 8.1+
@@ -119,3 +307,4 @@ php artisan serve
 - barryvdh/laravel-dompdf لتوليد PDF
 - خوارزمية تحويل التاريخ الهجري مدمجة
 - قاعدة البيانات: erp
+- Laravel Sanctum للـ API Authentication
