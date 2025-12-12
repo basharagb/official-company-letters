@@ -205,8 +205,12 @@ class LetterController extends Controller
     public function exportPdf($id)
     {
         $letter = Letter::with(['author', 'company'])->findOrFail($id);
+        $company = $letter->company;
         
-        $pdf = Pdf::loadView('letters.pdf', compact('letter'));
+        // اختيار القالب المناسب بناءً على إعدادات الشركة
+        $view = $company->letterhead_file ? 'letters.pdf-letterhead' : 'letters.pdf';
+        
+        $pdf = Pdf::loadView($view, compact('letter', 'company'));
         $pdf->setPaper('A4');
         
         return $pdf->download("letter-{$letter->reference_number}.pdf");
@@ -218,8 +222,12 @@ class LetterController extends Controller
     private function generatePdf(Letter $letter)
     {
         $letter->load(['author', 'company']);
+        $company = $letter->company;
         
-        $pdf = Pdf::loadView('letters.pdf', compact('letter'));
+        // اختيار القالب المناسب بناءً على إعدادات الشركة
+        $view = $company->letterhead_file ? 'letters.pdf-letterhead' : 'letters.pdf';
+        
+        $pdf = Pdf::loadView($view, compact('letter', 'company'));
         $pdfPath = "letters/pdf/{$letter->reference_number}.pdf";
         
         Storage::disk('public')->put($pdfPath, $pdf->output());

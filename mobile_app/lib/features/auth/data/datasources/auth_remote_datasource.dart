@@ -53,7 +53,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        return AuthResponseModel.fromJson(response.data);
+        // API يرجع البيانات داخل 'data'
+        final responseData = response.data;
+        final data = responseData['data'] ?? responseData;
+        return AuthResponseModel.fromJson(data);
       } else {
         throw DioException(
           requestOptions: response.requestOptions,
@@ -81,7 +84,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await _apiClient.get(ApiEndpoints.user);
 
       if (response.statusCode == 200) {
-        return UserModel.fromJson(response.data['user'] ?? response.data);
+        // API يرجع البيانات داخل 'data'
+        final responseData = response.data;
+        final data = responseData['data'] ?? responseData;
+        return UserModel.fromJson(data['user'] ?? data);
       } else {
         throw DioException(
           requestOptions: response.requestOptions,
@@ -113,7 +119,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return AuthResponseModel.fromJson(response.data);
+        // API يرجع البيانات داخل 'data'
+        final responseData = response.data;
+        final data = responseData['data'] ?? responseData;
+        return AuthResponseModel.fromJson(data);
       } else {
         throw DioException(
           requestOptions: response.requestOptions,
@@ -143,7 +152,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        return UserModel.fromJson(response.data['user'] ?? response.data);
+        // API يرجع البيانات داخل 'data'
+        final responseData = response.data;
+        final data = responseData['data'] ?? responseData;
+        return UserModel.fromJson(data['user'] ?? data);
       } else {
         throw DioException(
           requestOptions: response.requestOptions,

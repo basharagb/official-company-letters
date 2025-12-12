@@ -1,5 +1,31 @@
 # نظام إصدار الخطابات الرسمية للشركات
 
+## 🆕 ميزة الورق الرسمي والباركود (جديد)
+
+### ✅ تم إنجازه:
+- [x] إنشاء فرع `feature/letterhead-settings`
+- [x] إضافة migration لحقول إعدادات الورق الرسمي
+- [x] تحديث Model الشركة
+- [x] إنشاء صفحة إعدادات الورق الرسمي
+- [x] إنشاء قالب PDF مع الورق الرسمي كخلفية
+- [x] إضافة الباركود + الرقم الصادر + التاريخ الهجري/الميلادي + الموضوع
+- [x] إمكانية تحديد موقع الباركود (يمين/يسار)
+- [x] إنشاء صفحة الإعداد الأولي (onboarding)
+- [x] تثبيت مكتبة `milon/barcode`
+- [x] رفع التغييرات إلى GitHub
+
+### 📁 الملفات الجديدة:
+- `database/migrations/2024_01_01_000010_add_letterhead_settings_to_companies.php`
+- `resources/views/company/letterhead-settings.blade.php`
+- `resources/views/company/setup.blade.php`
+- `resources/views/letters/pdf-letterhead.blade.php`
+
+### 🔗 الروابط الجديدة:
+- `/company/letterhead` - إعدادات الورق الرسمي
+- `/company/setup` - الإعداد الأولي للشركة
+
+---
+
 ## 📱 Flutter Mobile App - API Integration Progress
 
 ### ✅ تم إنجازه:
@@ -12,11 +38,14 @@
 - [x] إنشاء Widgets المفقودة (StatCard, QuickActionCard, RecentLettersList, AnimatedTextField, AnimatedButton)
 - [x] إصلاح أخطاء Theme (CardThemeData, DialogThemeData)
 - [x] تحديث DashboardStats entity لإضافة userName و companyName
+- [x] إنشاء ملفات Android و iOS
+- [x] إضافة Dark Mode مع Theme Provider
+- [x] إنشاء صفحة الإعدادات مع تبديل الثيم
+- [x] تحديث الـ Theme بالكامل (Light + Dark)
+- [x] دمج التغييرات في main branch
+- [x] رفع التغييرات إلى GitHub
 
-### 🔄 قيد العمل:
-- [ ] إضافة ملفات Assets الناقصة
-- [ ] اختبار التطبيق والتأكد من اكتماله
-- [ ] إنشاء PR
+### ✅ مكتمل - جاهز للاختبار
 
 ### 📁 الملفات المُنشأة للـ Flutter:
 **Core:**
@@ -203,10 +232,12 @@ php artisan serve
 
 تم إنشاء API كامل يغطي جميع وظائف الويب، جاهز للاستخدام مع تطبيق Flutter.
 
-## 🔗 Base URL
+## 🔗 Base URL (Production)
 ```
-http://localhost:8000/api
+https://emsg.elite-center-ld.com/api
 ```
+
+> ⚠️ **ملاحظة**: تم تحديث الـ Base URL ليستخدم الرابط المنشور بدلاً من localhost
 
 ## 📋 جدول API Endpoints الكامل
 
@@ -544,6 +575,50 @@ flutter run
 
 ---
 
+---
+
+## 📱 ميزة الورق الرسمي للموبايل (جديد)
+
+### ✅ تم إنجازه:
+- [x] إضافة API endpoints للورق الرسمي في Laravel
+- [x] تحديث Flutter datasource مع methods جديدة
+- [x] إنشاء صفحة الإعداد الأولي (CompanySetupPage)
+- [x] تحديث صفحة إعدادات الشركة مع خيارات الورق الرسمي
+- [x] إضافة route للإعداد الأولي
+
+### 📁 الملفات الجديدة/المُحدثة:
+
+**Laravel API:**
+- `app/Http/Controllers/Api/CompanyApiController.php` - إضافة 6 endpoints جديدة
+- `routes/api.php` - إضافة routes للورق الرسمي والإعداد
+
+**Flutter Mobile:**
+- `lib/features/company/presentation/pages/company_setup_page.dart` ⭐ جديد
+- `lib/features/company/presentation/pages/company_settings_page.dart` ⭐ محدث
+- `lib/features/company/data/datasources/company_remote_datasource.dart` ⭐ محدث
+- `lib/core/config/app_config.dart` ⭐ محدث
+- `lib/core/router/app_router.dart` ⭐ محدث
+
+### 🔗 API Endpoints الجديدة:
+
+| Method | Endpoint | الوصف |
+|--------|----------|-------|
+| GET | `/api/company/letterhead` | جلب إعدادات الورق الرسمي |
+| PUT | `/api/company/letterhead` | تحديث إعدادات الباركود |
+| POST | `/api/company/letterhead` | رفع ملف الورق الرسمي |
+| DELETE | `/api/company/letterhead` | حذف ملف الورق الرسمي |
+| GET | `/api/company/setup-status` | التحقق من حالة الإعداد |
+| POST | `/api/company/complete-setup` | إكمال الإعداد الأولي |
+
+### 📋 الميزات:
+1. **رفع الورق الرسمي**: سكان PDF أو صورة للورق الرسمي
+2. **الباركود**: يحتوي على الرقم الصادر
+3. **الترتيب**: باركود ← رقم صادر ← تاريخ هجري ← تاريخ ميلادي ← موضوع
+4. **موقع**: يمين أو يسار الورقة
+5. **الإعداد الأولي**: معالج 3 خطوات عند أول استخدام
+
+---
+
 ## Lessons
 
 - Laravel 10 مع PHP 8.1+
@@ -556,3 +631,4 @@ flutter run
 - animate_do للـ UI Animations
 - GoRouter للـ Navigation
 - GetIt للـ Dependency Injection
+- **Flutter Provider Fix**: When using BLoC with provider pattern, ensure all BLoCs accessed via `context.read<>()` are added to `MultiBlocProvider` in main.dart. Simply registering them in dependency injection (GetIt) is not sufficient - they must be provided in the widget tree.

@@ -13,6 +13,15 @@ abstract class CompanyRemoteDataSource {
   Future<void> deleteLogo();
   Future<void> deleteSignature();
   Future<void> deleteStamp();
+  // إعدادات الورق الرسمي
+  Future<Map<String, dynamic>> getLetterheadSettings();
+  Future<Map<String, dynamic>> updateLetterheadSettings(
+      Map<String, dynamic> data);
+  Future<String> uploadLetterhead(String filePath);
+  Future<void> deleteLetterhead();
+  // الإعداد الأولي
+  Future<Map<String, dynamic>> getSetupStatus();
+  Future<Map<String, dynamic>> completeSetup(Map<String, dynamic> data);
 }
 
 class CompanyRemoteDataSourceImpl implements CompanyRemoteDataSource {
@@ -125,5 +134,97 @@ class CompanyRemoteDataSourceImpl implements CompanyRemoteDataSource {
   @override
   Future<void> deleteStamp() async {
     await _apiClient.delete(ApiEndpoints.companyStamp);
+  }
+
+  @override
+  Future<Map<String, dynamic>> getLetterheadSettings() async {
+    try {
+      final response = await _apiClient.get(ApiEndpoints.companyLetterhead);
+      if (response.statusCode == 200) {
+        return response.data['data'] ?? response.data;
+      }
+      throw DioException(
+        requestOptions: response.requestOptions,
+        message: 'فشل جلب إعدادات الورق الرسمي',
+      );
+    } on DioException {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateLetterheadSettings(
+      Map<String, dynamic> data) async {
+    try {
+      final response =
+          await _apiClient.put(ApiEndpoints.companyLetterhead, data: data);
+      if (response.statusCode == 200) {
+        return response.data['data'] ?? response.data;
+      }
+      throw DioException(
+        requestOptions: response.requestOptions,
+        message: 'فشل تحديث إعدادات الورق الرسمي',
+      );
+    } on DioException {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String> uploadLetterhead(String filePath) async {
+    try {
+      final response = await _apiClient.uploadFile(
+        ApiEndpoints.companyLetterhead,
+        filePath: filePath,
+        fieldName: 'letterhead_file',
+      );
+      if (response.statusCode == 200) {
+        return response.data['data']?['letterhead_url'] ?? '';
+      }
+      throw DioException(
+        requestOptions: response.requestOptions,
+        message: 'فشل رفع الورق الرسمي',
+      );
+    } on DioException {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> deleteLetterhead() async {
+    await _apiClient.delete(ApiEndpoints.companyLetterhead);
+  }
+
+  @override
+  Future<Map<String, dynamic>> getSetupStatus() async {
+    try {
+      final response = await _apiClient.get(ApiEndpoints.companySetupStatus);
+      if (response.statusCode == 200) {
+        return response.data['data'] ?? response.data;
+      }
+      throw DioException(
+        requestOptions: response.requestOptions,
+        message: 'فشل جلب حالة الإعداد',
+      );
+    } on DioException {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> completeSetup(Map<String, dynamic> data) async {
+    try {
+      final response =
+          await _apiClient.post(ApiEndpoints.companyCompleteSetup, data: data);
+      if (response.statusCode == 200) {
+        return response.data['data'] ?? response.data;
+      }
+      throw DioException(
+        requestOptions: response.requestOptions,
+        message: 'فشل إكمال الإعداد',
+      );
+    } on DioException {
+      rethrow;
+    }
   }
 }

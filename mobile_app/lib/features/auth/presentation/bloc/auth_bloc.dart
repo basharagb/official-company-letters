@@ -42,11 +42,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (token != null && token.isNotEmpty) {
         // جلب بيانات المستخدم
         final result = await getUserUseCase();
-        result.fold((failure) {
-          // Token غير صالح
-          secureStorage.delete(key: AppConfig.tokenKey);
-          emit(AuthUnauthenticated());
-        }, (user) => emit(AuthAuthenticated(user: user)));
+        await result.fold(
+          (failure) async {
+            // Token غير صالح
+            await secureStorage.delete(key: AppConfig.tokenKey);
+            emit(AuthUnauthenticated());
+          },
+          (user) async => emit(AuthAuthenticated(user: user)),
+        );
       } else {
         emit(AuthUnauthenticated());
       }
@@ -64,16 +67,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       password: event.password,
     );
 
-    result.fold((failure) => emit(AuthError(message: failure.message)), (
-      authResponse,
-    ) async {
-      // حفظ Token
-      await secureStorage.write(
-        key: AppConfig.tokenKey,
-        value: authResponse.token,
-      );
-      emit(AuthAuthenticated(user: authResponse.user));
-    });
+    await result.fold(
+      (failure) async => emit(AuthError(message: failure.message)),
+      (authResponse) async {
+        // حفظ Token
+        await secureStorage.write(
+          key: AppConfig.tokenKey,
+          value: authResponse.token,
+        );
+        emit(AuthAuthenticated(user: authResponse.user));
+      },
+    );
   }
 
   /// تسجيل الخروج

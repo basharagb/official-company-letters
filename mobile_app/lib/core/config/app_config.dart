@@ -7,8 +7,7 @@ class AppConfig {
   static const String appVersion = '1.0.0';
 
   // API Configuration
-  // TODO: تغيير هذا الرابط إلى رابط السيرفر الفعلي
-  static const String baseUrl = 'http://localhost:8000/api';
+  static const String baseUrl = 'https://emsg.elite-center-ld.com/api';
 
   // للاختبار على الموبايل استخدم IP الجهاز بدلاً من localhost
   // مثال: 'http://192.168.1.100:8000/api'
@@ -28,7 +27,7 @@ class AppConfig {
 
 /// API Endpoints - مطابقة لـ Laravel API
 ///
-/// Base URL: http://localhost:8000/api
+/// Base URL: https://emsg.elite-center-ld.com/api
 ///
 /// الـ Endpoints المتاحة:
 ///
@@ -150,6 +149,9 @@ class ApiEndpoints {
   static const String companyLogo = '/company/logo';
   static const String companySignature = '/company/signature';
   static const String companyStamp = '/company/stamp';
+  static const String companyLetterhead = '/company/letterhead';
+  static const String companySetupStatus = '/company/setup-status';
+  static const String companyCompleteSetup = '/company/complete-setup';
 
   // Templates
   static const String templates = '/templates';
