@@ -107,4 +107,54 @@ class CompanyRepositoryImpl implements CompanyRepository {
       return Left(UnknownFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, String>> uploadLetterhead(String filePath) async {
+    try {
+      final result = await _remoteDataSource.uploadLetterhead(filePath);
+      return Right(result);
+    } on DioException catch (e) {
+      return Left(ServerFailure(message: e.message ?? 'خطأ في السيرفر'));
+    } catch (e) {
+      return Left(UnknownFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> updateLetterheadSettings(
+    Map<String, dynamic> settings,
+  ) async {
+    try {
+      final result = await _remoteDataSource.updateLetterheadSettings(settings);
+      return Right(result);
+    } on DioException catch (e) {
+      return Left(ServerFailure(message: e.message ?? 'خطأ في السيرفر'));
+    } catch (e) {
+      return Left(UnknownFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> getLetterheadSettings() async {
+    try {
+      final result = await _remoteDataSource.getLetterheadSettings();
+      return Right(result);
+    } on DioException catch (e) {
+      return Left(ServerFailure(message: e.message ?? 'خطأ في السيرفر'));
+    } catch (e) {
+      return Left(UnknownFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteLetterhead() async {
+    try {
+      await _remoteDataSource.deleteLetterhead();
+      return const Right(null);
+    } on DioException catch (e) {
+      return Left(ServerFailure(message: e.message ?? 'خطأ في السيرفر'));
+    } catch (e) {
+      return Left(UnknownFailure(message: e.toString()));
+    }
+  }
 }

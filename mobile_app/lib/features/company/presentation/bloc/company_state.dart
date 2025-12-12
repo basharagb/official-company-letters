@@ -47,3 +47,10 @@ class CompanyError extends CompanyState {
   @override
   List<Object?> get props => [message];
 }
+
+class CompanyLetterheadSetupCompleted extends CompanyState {
+  final Map<String, dynamic> company;
+  const CompanyLetterheadSetupCompleted({required this.company});
+  @override
+  List<Object?> get props => [company];
+}

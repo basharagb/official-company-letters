@@ -291,7 +291,7 @@ class LetterApiController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'pdf_url' => $letter->pdf_path ? Storage::disk('public')->url($letter->pdf_path) : null,
+                'pdf_url' => $letter->pdf_path ? asset('storage/' . $letter->pdf_path) : null,
             ],
         ]);
     }
@@ -349,7 +349,7 @@ class LetterApiController extends Controller
         ], function ($mail) use ($request, $letter) {
             $mail->to($request->email)
                 ->subject('خطاب رسمي: ' . $letter->subject)
-                ->attach(Storage::disk('public')->path($letter->pdf_path));
+                ->attach(storage_path('app/public/' . $letter->pdf_path));
         });
 
         $letter->update(['status' => 'sent']);
@@ -385,15 +385,33 @@ class LetterApiController extends Controller
     }
 
     /**
-     * توليد PDF
+     * توليد PDF مع الورق الرسمي والباركود
      */
     private function generatePdf(Letter $letter)
     {
         $letter->load(['author', 'company']);
         
-        $pdf = Pdf::loadView('letters.pdf', compact('letter'));
-        $pdfPath = "letters/pdf/{$letter->reference_number}.pdf";
+        // إعداد البيانات للـ PDF
+        $hijriDate = HijriDate::now();
+        $gregorianDate = now()->format('Y-m-d');
         
+        // استخدام قالب الورق الرسمي إذا كان متوفراً
+        $viewTemplate = $letter->company->letterhead_file ? 'letters.pdf-letterhead' : 'letters.pdf';
+        
+        $pdf = Pdf::loadView($viewTemplate, [
+            'letter' => $letter,
+            'hijriDate' => $hijriDate,
+            'gregorianDate' => $gregorianDate,
+        ]);
+        
+        $pdf->setPaper('A4');
+        $pdf->setOptions([
+            'defaultFont' => 'DejaVu Sans',
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+        ]);
+        
+        $pdfPath = "letters/pdf/{$letter->reference_number}.pdf";
         Storage::disk('public')->put($pdfPath, $pdf->output());
         
         $letter->update(['pdf_path' => $pdfPath]);

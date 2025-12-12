@@ -12,4 +12,12 @@ abstract class CompanyRepository {
   Future<Either<Failure, void>> deleteLogo();
   Future<Either<Failure, void>> deleteSignature();
   Future<Either<Failure, void>> deleteStamp();
+
+  // Letterhead methods
+  Future<Either<Failure, String>> uploadLetterhead(String filePath);
+  Future<Either<Failure, Map<String, dynamic>>> updateLetterheadSettings(
+    Map<String, dynamic> settings,
+  );
+  Future<Either<Failure, Map<String, dynamic>>> getLetterheadSettings();
+  Future<Either<Failure, void>> deleteLetterhead();
 }

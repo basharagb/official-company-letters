@@ -53,8 +53,14 @@ dependencies:
   path_provider: ^2.1.1
   open_file: ^3.3.2
   
-  # PDF
+  # PDF & Printing
   flutter_pdfview: ^1.3.2
+  pdf: ^3.10.7
+  printing: ^5.12.0
+  
+  # Barcode Generation
+  barcode: ^2.2.7
+  qr_flutter: ^4.1.0
   
   # Image Picker
   image_picker: ^1.0.7
@@ -82,6 +88,11 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/animations/
+    - assets/fonts/
 
-  # Using Google Fonts package for Cairo font
-  # No local fonts needed
+  fonts:
+    - family: NotoSansArabic
+      fonts:
+        - asset: assets/fonts/NotoSansArabic-Regular.ttf
+        - asset: assets/fonts/NotoSansArabic-Bold.ttf
+          weight: 700
