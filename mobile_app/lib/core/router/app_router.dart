@@ -12,6 +12,7 @@ import '../../features/letters/presentation/pages/letter_details_page.dart';
 import '../../features/templates/presentation/pages/templates_page.dart';
 import '../../features/company/presentation/pages/company_settings_page.dart';
 import '../../features/company/presentation/pages/company_setup_page.dart';
+import '../../features/company/presentation/pages/letterhead_onboarding_page.dart';
 import '../../features/subscriptions/presentation/pages/subscriptions_page.dart';
 import '../../features/recipients/presentation/pages/recipients_page.dart';
 import '../../features/organizations/presentation/pages/organizations_page.dart';
@@ -32,6 +33,7 @@ class AppRoutes {
   static const String templates = '/templates';
   static const String companySettings = '/company/settings';
   static const String companySetup = '/company/setup';
+  static const String letterheadOnboarding = '/company/letterhead-onboarding';
   static const String subscriptions = '/subscriptions';
   static const String recipients = '/recipients';
   static const String organizations = '/organizations';
@@ -172,6 +174,29 @@ class AppRouter {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CompanySetupPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 1),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                ),
+              ),
+              child: child,
+            );
+          },
+        ),
+      ),
+
+      // Letterhead Onboarding (Full Screen)
+      GoRoute(
+        path: AppRoutes.letterheadOnboarding,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const LetterheadOnboardingPage(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return SlideTransition(
               position: Tween<Offset>(
