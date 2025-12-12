@@ -149,6 +149,9 @@ class ApiEndpoints {
   static const String companyLogo = '/company/logo';
   static const String companySignature = '/company/signature';
   static const String companyStamp = '/company/stamp';
+  static const String companyLetterhead = '/company/letterhead';
+  static const String companySetupStatus = '/company/setup-status';
+  static const String companyCompleteSetup = '/company/complete-setup';
 
   // Templates
   static const String templates = '/templates';

@@ -197,4 +197,178 @@ class CompanyApiController extends Controller
             'message' => 'تم حذف الختم بنجاح',
         ]);
     }
+
+    /**
+     * الحصول على إعدادات الورق الرسمي
+     */
+    public function getLetterheadSettings()
+    {
+        $company = Auth::user()->company;
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'letterhead_file' => $company->letterhead_file,
+                'letterhead_url' => $company->letterhead_file ? Storage::disk('public')->url($company->letterhead_file) : null,
+                'barcode_position' => $company->barcode_position ?? 'right',
+                'barcode_top_margin' => $company->barcode_top_margin ?? 20,
+                'barcode_side_margin' => $company->barcode_side_margin ?? 15,
+                'show_barcode' => $company->show_barcode ?? true,
+                'show_reference_number' => $company->show_reference_number ?? true,
+                'show_hijri_date' => $company->show_hijri_date ?? true,
+                'show_gregorian_date' => $company->show_gregorian_date ?? true,
+                'show_subject_in_header' => $company->show_subject_in_header ?? true,
+                'setup_completed' => $company->setup_completed ?? false,
+            ],
+        ]);
+    }
+
+    /**
+     * تحديث إعدادات الورق الرسمي
+     */
+    public function updateLetterheadSettings(Request $request)
+    {
+        $request->validate([
+            'barcode_position' => 'required|in:right,left',
+            'barcode_top_margin' => 'nullable|integer|min:0|max:100',
+            'barcode_side_margin' => 'nullable|integer|min:0|max:100',
+            'show_barcode' => 'nullable|boolean',
+            'show_reference_number' => 'nullable|boolean',
+            'show_hijri_date' => 'nullable|boolean',
+            'show_gregorian_date' => 'nullable|boolean',
+            'show_subject_in_header' => 'nullable|boolean',
+        ]);
+
+        $company = Auth::user()->company;
+
+        $company->barcode_position = $request->barcode_position;
+        $company->barcode_top_margin = $request->barcode_top_margin ?? 20;
+        $company->barcode_side_margin = $request->barcode_side_margin ?? 15;
+        $company->show_barcode = $request->show_barcode ?? true;
+        $company->show_reference_number = $request->show_reference_number ?? true;
+        $company->show_hijri_date = $request->show_hijri_date ?? true;
+        $company->show_gregorian_date = $request->show_gregorian_date ?? true;
+        $company->show_subject_in_header = $request->show_subject_in_header ?? true;
+        $company->setup_completed = true;
+
+        $company->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم تحديث إعدادات الورق الرسمي بنجاح',
+            'data' => [
+                'barcode_position' => $company->barcode_position,
+                'barcode_top_margin' => $company->barcode_top_margin,
+                'barcode_side_margin' => $company->barcode_side_margin,
+                'show_barcode' => $company->show_barcode,
+                'show_reference_number' => $company->show_reference_number,
+                'show_hijri_date' => $company->show_hijri_date,
+                'show_gregorian_date' => $company->show_gregorian_date,
+                'show_subject_in_header' => $company->show_subject_in_header,
+                'setup_completed' => $company->setup_completed,
+            ],
+        ]);
+    }
+
+    /**
+     * رفع ملف الورق الرسمي
+     */
+    public function uploadLetterhead(Request $request)
+    {
+        $request->validate([
+            'letterhead_file' => 'required|file|mimes:pdf,jpeg,png,jpg|max:5120',
+        ]);
+
+        $company = Auth::user()->company;
+
+        if ($company->letterhead_file) {
+            Storage::disk('public')->delete($company->letterhead_file);
+        }
+
+        $company->letterhead_file = $request->file('letterhead_file')->store('company/letterheads', 'public');
+        $company->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم رفع الورق الرسمي بنجاح',
+            'data' => [
+                'letterhead_url' => Storage::disk('public')->url($company->letterhead_file),
+            ],
+        ]);
+    }
+
+    /**
+     * حذف ملف الورق الرسمي
+     */
+    public function deleteLetterhead()
+    {
+        $company = Auth::user()->company;
+
+        if ($company->letterhead_file) {
+            Storage::disk('public')->delete($company->letterhead_file);
+            $company->letterhead_file = null;
+            $company->save();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم حذف الورق الرسمي بنجاح',
+        ]);
+    }
+
+    /**
+     * التحقق من حالة الإعداد الأولي
+     */
+    public function checkSetupStatus()
+    {
+        $company = Auth::user()->company;
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'setup_completed' => $company->setup_completed ?? false,
+                'has_letterhead' => !empty($company->letterhead_file),
+                'has_logo' => !empty($company->logo),
+                'has_signature' => !empty($company->signature),
+                'has_stamp' => !empty($company->stamp),
+            ],
+        ]);
+    }
+
+    /**
+     * إكمال الإعداد الأولي (من الموبايل)
+     */
+    public function completeSetup(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'barcode_position' => 'required|in:right,left',
+        ]);
+
+        $company = Auth::user()->company;
+
+        // تحديث البيانات الأساسية
+        $company->fill($request->only([
+            'name', 'name_en', 'address', 'phone', 'email', 'letter_prefix'
+        ]));
+
+        // تحديث إعدادات الباركود
+        $company->barcode_position = $request->barcode_position ?? 'right';
+        $company->show_barcode = $request->show_barcode ?? true;
+        $company->show_reference_number = $request->show_reference_number ?? true;
+        $company->show_hijri_date = $request->show_hijri_date ?? true;
+        $company->show_gregorian_date = $request->show_gregorian_date ?? true;
+        $company->show_subject_in_header = $request->show_subject_in_header ?? true;
+        $company->barcode_top_margin = $request->barcode_top_margin ?? 20;
+        $company->barcode_side_margin = $request->barcode_side_margin ?? 15;
+        $company->setup_completed = true;
+
+        $company->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم إكمال الإعداد بنجاح',
+            'data' => $company,
+        ]);
+    }
 }

@@ -77,6 +77,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/logo', [CompanyApiController::class, 'deleteLogo']);
         Route::delete('/signature', [CompanyApiController::class, 'deleteSignature']);
         Route::delete('/stamp', [CompanyApiController::class, 'deleteStamp']);
+        // إعدادات الورق الرسمي
+        Route::get('/letterhead', [CompanyApiController::class, 'getLetterheadSettings']);
+        Route::put('/letterhead', [CompanyApiController::class, 'updateLetterheadSettings']);
+        Route::post('/letterhead', [CompanyApiController::class, 'uploadLetterhead']);
+        Route::delete('/letterhead', [CompanyApiController::class, 'deleteLetterhead']);
+        // الإعداد الأولي
+        Route::get('/setup-status', [CompanyApiController::class, 'checkSetupStatus']);
+        Route::post('/complete-setup', [CompanyApiController::class, 'completeSetup']);
     });
 
     // ----- القوالب -----
