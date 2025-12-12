@@ -15,18 +15,41 @@ class UserModel extends User {
 
   /// من JSON إلى Model
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    // استخراج اسم الشركة من كائن company إذا كان موجوداً
+    String? companyName;
+    if (json['company'] != null && json['company'] is Map) {
+      companyName = json['company']['name'] as String?;
+    } else {
+      companyName = json['company_name'] as String?;
+    }
+
     return UserModel(
-      id: json['id'] as int,
+      id: _parseInt(json['id']),
       name: json['name'] as String,
       email: json['email'] as String,
       jobTitle: json['job_title'] as String?,
       phone: json['phone'] as String?,
-      companyId: json['company_id'] as int?,
-      companyName: json['company_name'] as String?,
+      companyId: _parseIntNullable(json['company_id']),
+      companyName: companyName,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : null,
     );
+  }
+
+  /// تحويل القيمة إلى int (يدعم String و int)
+  static int _parseInt(dynamic value) {
+    if (value is int) return value;
+    if (value is String) return int.parse(value);
+    return 0;
+  }
+
+  /// تحويل القيمة إلى int? (يدعم String و int و null)
+  static int? _parseIntNullable(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   /// من Model إلى JSON
