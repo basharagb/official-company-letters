@@ -15,6 +15,16 @@ class Company extends Model
         'logo',
         'signature',
         'stamp',
+        'letterhead_file',
+        'barcode_position',
+        'show_barcode',
+        'show_reference_number',
+        'show_hijri_date',
+        'show_gregorian_date',
+        'show_subject_in_header',
+        'setup_completed',
+        'barcode_top_margin',
+        'barcode_side_margin',
         'address',
         'phone',
         'email',
@@ -23,6 +33,15 @@ class Company extends Model
         'tax_number',
         'letter_prefix',
         'last_letter_number',
+    ];
+
+    protected $casts = [
+        'show_barcode' => 'boolean',
+        'show_reference_number' => 'boolean',
+        'show_hijri_date' => 'boolean',
+        'show_gregorian_date' => 'boolean',
+        'show_subject_in_header' => 'boolean',
+        'setup_completed' => 'boolean',
     ];
 
     /**

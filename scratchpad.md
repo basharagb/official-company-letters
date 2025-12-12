@@ -12,11 +12,14 @@
 - [x] إنشاء Widgets المفقودة (StatCard, QuickActionCard, RecentLettersList, AnimatedTextField, AnimatedButton)
 - [x] إصلاح أخطاء Theme (CardThemeData, DialogThemeData)
 - [x] تحديث DashboardStats entity لإضافة userName و companyName
+- [x] إنشاء ملفات Android و iOS
+- [x] إضافة Dark Mode مع Theme Provider
+- [x] إنشاء صفحة الإعدادات مع تبديل الثيم
+- [x] تحديث الـ Theme بالكامل (Light + Dark)
+- [x] دمج التغييرات في main branch
+- [x] رفع التغييرات إلى GitHub
 
-### 🔄 قيد العمل:
-- [ ] إضافة ملفات Assets الناقصة
-- [ ] اختبار التطبيق والتأكد من اكتماله
-- [ ] إنشاء PR
+### ✅ مكتمل - جاهز للاختبار
 
 ### 📁 الملفات المُنشأة للـ Flutter:
 **Core:**

@@ -273,9 +273,13 @@
                     href="{{ route('templates.index') }}">
                     <i class="bi bi-file-earmark-text"></i> القوالب
                 </a>
-                <a class="nav-link {{ request()->routeIs('company.*') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('company.settings') ? 'active' : '' }}"
                     href="{{ route('company.settings') }}">
                     <i class="bi bi-building"></i> إعدادات الشركة
+                </a>
+                <a class="nav-link {{ request()->routeIs('company.letterhead') ? 'active' : '' }}"
+                    href="{{ route('company.letterhead') }}">
+                    <i class="bi bi-file-earmark-pdf"></i> الورق الرسمي
                 </a>
                 <a class="nav-link {{ request()->routeIs('subscriptions.*') ? 'active' : '' }}"
                     href="{{ route('subscriptions.index') }}">
