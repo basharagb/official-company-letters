@@ -10,6 +10,7 @@ import 'core/theme/theme_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/di/injection_container.dart' as di;
 import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,6 +49,8 @@ class LettersApp extends StatelessWidget {
               BlocProvider<AuthBloc>(
                   create: (_) =>
                       di.sl<AuthBloc>()..add(CheckAuthStatusEvent())),
+              BlocProvider<DashboardBloc>(
+                  create: (_) => di.sl<DashboardBloc>()),
             ],
             child: MaterialApp.router(
               title: AppConfig.appName,

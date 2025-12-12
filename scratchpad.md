@@ -631,3 +631,4 @@ flutter run
 - animate_do للـ UI Animations
 - GoRouter للـ Navigation
 - GetIt للـ Dependency Injection
+- **Flutter Provider Fix**: When using BLoC with provider pattern, ensure all BLoCs accessed via `context.read<>()` are added to `MultiBlocProvider` in main.dart. Simply registering them in dependency injection (GetIt) is not sufficient - they must be provided in the widget tree.

@@ -42,7 +42,7 @@ class DashboardApiController extends Controller
 
         // حالة الاشتراك
         $subscription = Subscription::where('company_id', $companyId)
-            ->where('is_active', true)
+            ->where('status', 'active')
             ->first();
 
         $subscriptionStatus = null;
