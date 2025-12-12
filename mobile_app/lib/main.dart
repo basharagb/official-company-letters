@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import 'core/config/app_config.dart';
@@ -52,28 +53,35 @@ class LettersApp extends StatelessWidget {
               BlocProvider<DashboardBloc>(
                   create: (_) => di.sl<DashboardBloc>()),
             ],
-            child: MaterialApp.router(
-              title: AppConfig.appName,
-              debugShowCheckedModeBanner: false,
+            child: ScreenUtilInit(
+              designSize: const Size(375, 812), // iPhone 11 Pro design size
+              minTextAdapt: true,
+              splitScreenMode: true,
+              builder: (context, child) {
+                return MaterialApp.router(
+                  title: AppConfig.appName,
+                  debugShowCheckedModeBanner: false,
 
-              // Theme with Dark Mode Support
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
-              themeMode: themeProvider.themeMode,
+                  // Theme with Dark Mode Support
+                  theme: AppTheme.lightTheme,
+                  darkTheme: AppTheme.darkTheme,
+                  themeMode: themeProvider.themeMode,
 
-              // Localization - Arabic RTL
-              locale: const Locale('ar', 'SA'),
-              supportedLocales: const [
-                Locale('ar', 'SA'),
-              ],
-              localizationsDelegates: const [
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
+                  // Localization - Arabic RTL
+                  locale: const Locale('ar', 'SA'),
+                  supportedLocales: const [
+                    Locale('ar', 'SA'),
+                  ],
+                  localizationsDelegates: const [
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
 
-              // Router
-              routerConfig: AppRouter.router,
+                  // Router
+                  routerConfig: AppRouter.router,
+                );
+              },
             ),
           );
         },
