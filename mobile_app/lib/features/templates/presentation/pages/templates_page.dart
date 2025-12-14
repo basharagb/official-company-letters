@@ -7,6 +7,7 @@ import 'package:iconsax/iconsax.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/di/injection_container.dart' as di;
+import 'template_upload_page.dart';
 
 /// صفحة قوالب الخطابات
 class TemplatesPage extends StatefulWidget {
@@ -40,7 +41,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
         actions: [
           IconButton(
             icon: const Icon(Iconsax.add),
-            onPressed: () => _showCreateTemplateDialog(),
+            onPressed: () => _showAddTemplateOptions(),
           ),
         ],
       ),
@@ -95,6 +96,17 @@ class _TemplatesPageState extends State<TemplatesPage> {
             Text(
               'ابدأ بإنشاء قالب جديد',
               style: TextStyle(color: Colors.grey, fontSize: 14.sp),
+            ),
+            SizedBox(height: 24.h),
+            ElevatedButton.icon(
+              onPressed: () => _showAddTemplateOptions(),
+              icon: const Icon(Iconsax.add),
+              label: const Text('إضافة قالب'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+              ),
             ),
           ],
         ),
@@ -569,6 +581,106 @@ class _TemplatesPageState extends State<TemplatesPage> {
       return '${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}';
     } catch (e) {
       return 'غير محدد';
+    }
+  }
+
+  /// عرض خيارات إضافة قالب جديد
+  void _showAddTemplateOptions() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) => Container(
+        padding: EdgeInsets.all(20.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(height: 20.h),
+            Text(
+              'إضافة قالب جديد',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Cairo',
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'اختر طريقة إضافة القالب',
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.grey.shade600,
+                fontFamily: 'Cairo',
+              ),
+            ),
+            SizedBox(height: 20.h),
+
+            // خيار رفع ورق رسمي (سكان)
+            ListTile(
+              leading: Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(Iconsax.scan, color: AppColors.primary),
+              ),
+              title: const Text('رفع ورق رسمي (سكان)'),
+              subtitle: const Text('مسح ضوئي أو رفع PDF للورق الرسمي'),
+              trailing: const Icon(Iconsax.arrow_left_2),
+              onTap: () {
+                Navigator.pop(context);
+                _navigateToTemplateUpload();
+              },
+            ),
+            const Divider(),
+
+            // خيار إنشاء قالب نصي
+            ListTile(
+              leading: Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(Iconsax.document_text, color: Colors.green),
+              ),
+              title: const Text('إنشاء قالب نصي'),
+              subtitle: const Text('قالب نصي بسيط للخطابات'),
+              trailing: const Icon(Iconsax.arrow_left_2),
+              onTap: () {
+                Navigator.pop(context);
+                _showCreateTemplateDialog();
+              },
+            ),
+            SizedBox(height: 20.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// الانتقال لصفحة رفع القالب
+  void _navigateToTemplateUpload() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TemplateUploadPage(),
+      ),
+    );
+
+    // إعادة تحميل القوالب إذا تم إضافة قالب جديد
+    if (result == true) {
+      _loadTemplates();
     }
   }
 }

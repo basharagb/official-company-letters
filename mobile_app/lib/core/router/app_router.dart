@@ -20,6 +20,8 @@ import '../../features/recipient_titles/presentation/pages/recipient_titles_page
 import '../../features/letter_subjects/presentation/pages/letter_subjects_page.dart';
 import '../../features/main/presentation/pages/main_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
+import '../../features/templates/presentation/pages/template_upload_page.dart';
+import '../../features/templates/presentation/pages/template_initial_setup_page.dart';
 
 /// مسارات التطبيق
 class AppRoutes {
@@ -40,6 +42,8 @@ class AppRoutes {
   static const String recipientTitles = '/recipient-titles';
   static const String letterSubjects = '/letter-subjects';
   static const String settings = '/settings';
+  static const String templateUpload = '/templates/upload';
+  static const String templateInitialSetup = '/templates/initial-setup';
 }
 
 /// Router Configuration
@@ -220,6 +224,52 @@ class AppRouter {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const LetterCreatePage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 1),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                ),
+              ),
+              child: child,
+            );
+          },
+        ),
+      ),
+
+      // Template Upload (Full Screen)
+      GoRoute(
+        path: AppRoutes.templateUpload,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const TemplateUploadPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 1),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                ),
+              ),
+              child: child,
+            );
+          },
+        ),
+      ),
+
+      // Template Initial Setup (Full Screen - Onboarding)
+      GoRoute(
+        path: AppRoutes.templateInitialSetup,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const TemplateInitialSetupPage(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return SlideTransition(
               position: Tween<Offset>(

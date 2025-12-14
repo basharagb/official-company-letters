@@ -1,6 +1,35 @@
 # نظام إصدار الخطابات الرسمية للشركات
 
-## 🆕 ميزة الورق الرسمي والباركود (جديد)
+## 🆕 ميزة رفع قالب الورق الرسمي عبر السكان (Dec 2025)
+
+### ✅ تم إنجازه:
+- [x] إنشاء فرع `feature/template-scan-upload`
+- [x] إضافة مكتبات `file_picker` و `document_scanner_flutter` في pubspec.yaml
+- [x] إنشاء صفحة `TemplateUploadPage` لرفع القالب عبر السكان/المعرض/PDF
+- [x] إنشاء صفحة `TemplateInitialSetupPage` للإعداد الأولي عند تحميل التطبيق
+- [x] تحديث صفحة القوالب لإضافة خيارات رفع القالب
+- [x] إضافة مسارات جديدة في app_router.dart
+
+### 📁 الملفات الجديدة:
+- `lib/features/templates/presentation/pages/template_upload_page.dart` - صفحة رفع القالب مع 3 خطوات
+- `lib/features/templates/presentation/pages/template_initial_setup_page.dart` - صفحة الإعداد الأولي مع 4 خطوات
+
+### 📝 الميزات الجديدة:
+1. **رفع الورق الرسمي**: سكان ضوئي / من المعرض / ملف PDF
+2. **إعدادات الباركود**:
+   - موقع الباركود (يمين/يسار)
+   - عرض/إخفاء: الباركود، الرقم الصادر، التاريخ الهجري، التاريخ الميلادي، الموضوع
+   - تحديد الهوامش (من الأعلى/من الجانب)
+3. **الإعداد الأولي**: معالج 4 خطوات عند أول استخدام
+4. **معاينة الباركود**: عرض مباشر للإعدادات
+
+### 🔗 المسارات الجديدة:
+- `/templates/upload` - رفع قالب جديد
+- `/templates/initial-setup` - الإعداد الأولي
+
+---
+
+## 📌 ميزة الورق الرسمي والباركود (سابق)
 
 ### ✅ تم إنجازه:
 - [x] إنشاء فرع `feature/letterhead-settings`
@@ -655,3 +684,12 @@ flutter run
 - **Production Environment**: Use `APP_DEBUG=false` and `LOG_LEVEL=error` in production. Set proper database credentials for cPanel hosting.
 - **Frontend Assets**: Run `npm install` and `npm run build` to ensure frontend assets are properly compiled for production.
 - **cPanel Deployment**: Database credentials format - `elitece_erp` database, `elitece_user` username, password: `Bashar@1994engzy`
+
+### 🔧 Dec 14, 2025 - Logout Route & Mobile Permissions Fix:
+
+- **Logout Route Error**: Fixed "GET method not supported for route logout" error. Changed `Route::post('/logout')` to `Route::match(['get', 'post'], '/logout')` in `routes/web.php` to support both GET and POST methods.
+
+- **Mobile App Crash on Template Upload (iPhone)**: Added missing permissions for iOS and Android:
+  - **iOS (Info.plist)**: Added `NSPhotoLibraryUsageDescription`, `NSPhotoLibraryAddUsageDescription`, `NSCameraUsageDescription`, `NSDocumentsFolderUsageDescription`, `UIFileSharingEnabled`, `LSSupportsOpeningDocumentsInPlace`
+  - **Android (AndroidManifest.xml)**: Added `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`, `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_MEDIA_AUDIO`, `CAMERA`, `MANAGE_EXTERNAL_STORAGE`
+  - **Flutter**: Added `permission_handler: ^11.3.0` package and implemented runtime permission requests in `template_upload_page.dart` and `template_initial_setup_page.dart`
