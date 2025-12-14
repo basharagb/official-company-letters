@@ -30,6 +30,15 @@ Route::get('/', function () {
 // رابط مشاركة الخطاب (عام)
 Route::get('/letters/share/{token}', [LetterController::class, 'share'])->name('letters.share');
 
+// صفحات سياسة الخصوصية والشروط والأحكام (عامة - للـ App Store و Google Play)
+Route::get('/privacy-policy', function () {
+    return view('pages.privacy-policy');
+})->name('privacy-policy');
+
+Route::get('/terms-conditions', function () {
+    return view('pages.terms-conditions');
+})->name('terms-conditions');
+
 // مسارات الضيوف (غير مسجلين) - تسجيل الدخول فقط
 Route::middleware(['already_login'])->group(function () {
     Route::get('/login', [LoginController::class, 'index'])->name('login');
