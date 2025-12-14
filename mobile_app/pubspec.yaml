@@ -65,14 +65,16 @@ dependencies:
   # Image Picker
   image_picker: ^1.0.7
   
-  # Document Scanner
-  document_scanner_flutter: ^0.2.7
-  file_picker: ^6.1.1
+  # File Picker (document_scanner_flutter removed due to WeScan Swift compatibility issues)
+  file_picker: ^8.0.0
   
   # Pull to Refresh
   pull_to_refresh: ^2.0.0
   get_it: ^9.2.0
   provider: ^6.1.5+1
+  
+  # Permissions
+  permission_handler: ^11.3.0
   
   # Responsive Design
   flutter_screenutil: ^5.9.0

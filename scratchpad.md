@@ -684,3 +684,12 @@ flutter run
 - **Production Environment**: Use `APP_DEBUG=false` and `LOG_LEVEL=error` in production. Set proper database credentials for cPanel hosting.
 - **Frontend Assets**: Run `npm install` and `npm run build` to ensure frontend assets are properly compiled for production.
 - **cPanel Deployment**: Database credentials format - `elitece_erp` database, `elitece_user` username, password: `Bashar@1994engzy`
+
+### 🔧 Dec 14, 2025 - Logout Route & Mobile Permissions Fix:
+
+- **Logout Route Error**: Fixed "GET method not supported for route logout" error. Changed `Route::post('/logout')` to `Route::match(['get', 'post'], '/logout')` in `routes/web.php` to support both GET and POST methods.
+
+- **Mobile App Crash on Template Upload (iPhone)**: Added missing permissions for iOS and Android:
+  - **iOS (Info.plist)**: Added `NSPhotoLibraryUsageDescription`, `NSPhotoLibraryAddUsageDescription`, `NSCameraUsageDescription`, `NSDocumentsFolderUsageDescription`, `UIFileSharingEnabled`, `LSSupportsOpeningDocumentsInPlace`
+  - **Android (AndroidManifest.xml)**: Added `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`, `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_MEDIA_AUDIO`, `CAMERA`, `MANAGE_EXTERNAL_STORAGE`
+  - **Flutter**: Added `permission_handler: ^11.3.0` package and implemented runtime permission requests in `template_upload_page.dart` and `template_initial_setup_page.dart`

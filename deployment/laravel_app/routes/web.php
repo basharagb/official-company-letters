@@ -39,7 +39,7 @@ Route::middleware(['already_login'])->group(function () {
 // مسارات المستخدمين المسجلين
 Route::middleware(['is_login'])->group(function () {
     // تسجيل الخروج
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::match(['get', 'post'], '/logout', [LoginController::class, 'logout'])->name('logout');
     
     // لوحة التحكم
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

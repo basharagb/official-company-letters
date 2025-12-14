@@ -50,5 +50,17 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>نحتاج الوصول إلى مكتبة الصور لاختيار صور القوالب والشعارات</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>نحتاج الوصول لحفظ الصور في مكتبة الصور</string>
+	<key>NSCameraUsageDescription</key>
+	<string>نحتاج الوصول إلى الكاميرا لالتقاط صور القوالب والشعارات</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>نحتاج الوصول إلى المستندات لرفع وحفظ الملفات</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 </dict>
 </plist>

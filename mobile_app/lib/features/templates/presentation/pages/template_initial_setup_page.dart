@@ -5,6 +5,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/network/api_client.dart';
@@ -1058,8 +1059,83 @@ class _TemplateInitialSetupPageState extends State<TemplateInitialSetupPage> {
     );
   }
 
+  // طلب صلاحيات الكاميرا
+  Future<bool> _requestCameraPermission() async {
+    final status = await Permission.camera.status;
+    if (status.isGranted) return true;
+
+    final result = await Permission.camera.request();
+    if (result.isPermanentlyDenied) {
+      _showPermissionDeniedDialog('الكاميرا');
+      return false;
+    }
+    return result.isGranted;
+  }
+
+  // طلب صلاحيات المعرض
+  Future<bool> _requestPhotosPermission() async {
+    PermissionStatus status;
+    if (Platform.isIOS) {
+      status = await Permission.photos.status;
+      if (status.isGranted || status.isLimited) return true;
+      final result = await Permission.photos.request();
+      if (result.isPermanentlyDenied) {
+        _showPermissionDeniedDialog('الصور');
+        return false;
+      }
+      return result.isGranted || result.isLimited;
+    } else {
+      if (await Permission.photos.status.isGranted) return true;
+      status = await Permission.storage.status;
+      if (status.isGranted) return true;
+
+      final result = await Permission.photos.request();
+      if (result.isGranted) return true;
+
+      final storageResult = await Permission.storage.request();
+      if (storageResult.isPermanentlyDenied) {
+        _showPermissionDeniedDialog('التخزين');
+        return false;
+      }
+      return storageResult.isGranted;
+    }
+  }
+
+  // عرض رسالة رفض الصلاحيات
+  void _showPermissionDeniedDialog(String permission) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'صلاحية $permission مطلوبة',
+          style: const TextStyle(fontFamily: 'Cairo'),
+        ),
+        content: Text(
+          'يرجى السماح بالوصول إلى $permission من إعدادات التطبيق',
+          style: const TextStyle(fontFamily: 'Cairo'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إلغاء'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              openAppSettings();
+            },
+            child: const Text('فتح الإعدادات'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _scanDocument() async {
     try {
+      final hasPermission = await _requestCameraPermission();
+      if (!hasPermission) return;
+
       final XFile? photo = await _imagePicker.pickImage(
         source: ImageSource.camera,
         imageQuality: 90,
@@ -1077,6 +1153,9 @@ class _TemplateInitialSetupPageState extends State<TemplateInitialSetupPage> {
 
   Future<void> _pickFromGallery() async {
     try {
+      final hasPermission = await _requestPhotosPermission();
+      if (!hasPermission) return;
+
       final XFile? image = await _imagePicker.pickImage(
         source: ImageSource.gallery,
         imageQuality: 90,
