@@ -693,3 +693,8 @@ flutter run
   - **iOS (Info.plist)**: Added `NSPhotoLibraryUsageDescription`, `NSPhotoLibraryAddUsageDescription`, `NSCameraUsageDescription`, `NSDocumentsFolderUsageDescription`, `UIFileSharingEnabled`, `LSSupportsOpeningDocumentsInPlace`
   - **Android (AndroidManifest.xml)**: Added `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`, `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_MEDIA_AUDIO`, `CAMERA`, `MANAGE_EXTERNAL_STORAGE`
   - **Flutter**: Added `permission_handler: ^11.3.0` package and implemented runtime permission requests in `template_upload_page.dart` and `template_initial_setup_page.dart`
+
+### 🔧 Dec 14, 2025 - Legal Pages (English Only)
+
+- **English-only Legal Pages**: Updated `/privacy-policy` and `/terms-conditions` web pages to be English-only for App Store / Google Play submission requirements.
+- **Test Coverage**: Added `tests/Feature/LegalPagesTest.php` to assert both pages return `200` and contain English headings.
