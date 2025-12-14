@@ -10,7 +10,7 @@ use App\Models\Recipient;
 use App\Models\Organization;
 use App\Models\RecipientTitle;
 use App\Models\LetterSubject;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\PdfService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -205,15 +205,13 @@ class LetterController extends Controller
     public function exportPdf($id)
     {
         $letter = Letter::with(['author', 'company'])->findOrFail($id);
-        $company = $letter->company;
         
-        // اختيار القالب المناسب بناءً على إعدادات الشركة
-        $view = $company->letterhead_file ? 'letters.pdf-letterhead' : 'letters.pdf';
+        $pdfService = new PdfService();
+        $pdfContent = $pdfService->generateLetterPdf($letter);
         
-        $pdf = Pdf::loadView($view, compact('letter', 'company'));
-        $pdf->setPaper('A4');
-        
-        return $pdf->download("letter-{$letter->reference_number}.pdf");
+        return response($pdfContent)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="letter-' . $letter->reference_number . '.pdf"');
     }
 
     /**
@@ -222,15 +220,12 @@ class LetterController extends Controller
     private function generatePdf(Letter $letter)
     {
         $letter->load(['author', 'company']);
-        $company = $letter->company;
         
-        // اختيار القالب المناسب بناءً على إعدادات الشركة
-        $view = $company->letterhead_file ? 'letters.pdf-letterhead' : 'letters.pdf';
+        $pdfService = new PdfService();
+        $pdfContent = $pdfService->generateLetterPdf($letter);
         
-        $pdf = Pdf::loadView($view, compact('letter', 'company'));
         $pdfPath = "letters/pdf/{$letter->reference_number}.pdf";
-        
-        Storage::disk('public')->put($pdfPath, $pdf->output());
+        Storage::disk('public')->put($pdfPath, $pdfContent);
         
         $letter->update(['pdf_path' => $pdfPath]);
     }
@@ -272,7 +267,7 @@ class LetterController extends Controller
         ], function ($mail) use ($request, $letter) {
             $mail->to($request->email)
                 ->subject('خطاب رسمي: ' . $letter->subject)
-                ->attach(Storage::disk('public')->path($letter->pdf_path));
+                ->attach(storage_path('app/public/' . $letter->pdf_path));
         });
 
         $letter->update(['status' => 'sent']);

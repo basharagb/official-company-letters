@@ -5,13 +5,8 @@
     <meta charset="UTF-8">
     <title>{{ $letter->subject }}</title>
     <style>
-        @font-face {
-            font-family: 'Cairo';
-            src: url('https://fonts.gstatic.com/s/cairo/v28/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs2SgRjCAGMQ1z0hOA-W1ToLQ-HmkA.woff2') format('woff2');
-        }
-
         * {
-            font-family: 'Cairo', 'DejaVu Sans', sans-serif;
+            font-family: 'Amiri', 'DejaVu Sans', sans-serif;
             margin: 0;
             padding: 0;
             box-sizing: border-box;

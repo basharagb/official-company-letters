@@ -646,6 +646,8 @@ flutter run
 
 ### 🐛 Bug Fix Lessons (Dec 2025):
 
+- **PDF Arabic Text Reversed**: Fixed issue where Arabic text appeared reversed/mirrored in exported PDF. The problem was that dompdf doesn't properly handle Google Fonts loaded via URL for RTL languages. Solution: Removed @font-face for Cairo font and used DejaVu Sans (built-in dompdf font that supports Arabic). Also created `config/dompdf.php` with `enable_remote => true` and `default_font => 'DejaVu Sans'`.
+
 - **Database Column Mismatch**: Fixed 500 error in `DashboardApiController` where code tried to query `is_active` column on subscriptions table, but table uses `status` enum instead. Always check actual database schema vs model queries.
 - **Missing User Table Columns**: Laravel authentication expects `remember_token` and `email_verified_at` columns in users table. Created migration to add these missing columns.
 - **Subscription Model Methods**: Added missing methods `remainingLetters()`, `daysRemaining()`, and `getPlanAttribute()` to Subscription model that were being called by API but didn't exist.
