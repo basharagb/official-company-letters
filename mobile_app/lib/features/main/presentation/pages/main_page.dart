@@ -27,9 +27,15 @@ class _MainPageState extends State<MainPage> {
       route: AppRoutes.templates,
     ),
     _NavItem(
+      icon: Iconsax.document,
+      activeIcon: Iconsax.document5,
+      label: 'الخطابات',
+      route: AppRoutes.letters,
+    ),
+    _NavItem(
       icon: Iconsax.add_circle,
       activeIcon: Iconsax.add_circle5,
-      label: 'إنشاء خطاب',
+      label: 'جديد',
       route: AppRoutes.letterCreate,
     ),
     _NavItem(
@@ -37,12 +43,6 @@ class _MainPageState extends State<MainPage> {
       activeIcon: Iconsax.home_15,
       label: 'الرئيسية',
       route: AppRoutes.main,
-    ),
-    _NavItem(
-      icon: Iconsax.document,
-      activeIcon: Iconsax.document5,
-      label: 'الخطابات',
-      route: AppRoutes.letters,
     ),
     _NavItem(
       icon: Iconsax.menu_1,
@@ -59,8 +59,8 @@ class _MainPageState extends State<MainPage> {
       return;
     }
 
-    if (index == 1) {
-      // صفحة إنشاء خطاب جديد - Full Screen
+    if (index == 2) {
+      // صفحة إنشاء خطاب جديد - Full Screen (FAB في المنتصف)
       context.push(AppRoutes.letterCreate);
       return;
     }
@@ -98,8 +98,8 @@ class _MainPageState extends State<MainPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(_navItems.length, (index) {
-              if (index == 1) {
-                // مكان FAB - إنشاء خطاب
+              if (index == 2) {
+                // مكان FAB - إنشاء خطاب (في المنتصف)
                 return const SizedBox(width: 56);
               }
               return _buildNavItem(index);
