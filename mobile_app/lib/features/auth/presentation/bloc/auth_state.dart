@@ -17,11 +17,15 @@ class AuthLoading extends AuthState {}
 /// مصادق (مسجل دخول)
 class AuthAuthenticated extends AuthState {
   final User user;
+  final bool needsOrganizationSetup;
 
-  const AuthAuthenticated({required this.user});
+  const AuthAuthenticated({
+    required this.user,
+    this.needsOrganizationSetup = false,
+  });
 
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, needsOrganizationSetup];
 }
 
 /// غير مصادق

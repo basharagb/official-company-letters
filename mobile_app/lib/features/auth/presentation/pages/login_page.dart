@@ -35,11 +35,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void _login() {
     if (_formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(
-        LoginEvent(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-        ),
-      );
+            LoginEvent(
+              email: _emailController.text.trim(),
+              password: _passwordController.text,
+            ),
+          );
     }
   }
 
@@ -56,7 +56,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         }
 
         if (state is AuthAuthenticated) {
-          context.go(AppRoutes.main);
+          // التحقق من حالة إعداد المؤسسة
+          if (state.needsOrganizationSetup) {
+            context.go(AppRoutes.organizationSetup);
+          } else {
+            context.go(AppRoutes.main);
+          }
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -256,8 +261,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           strokeWidth: 2,
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
-                                                Colors.white,
-                                              ),
+                                            Colors.white,
+                                          ),
                                         ),
                                       )
                                     : const Row(
@@ -291,12 +296,45 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     delay: const Duration(milliseconds: 800),
                     duration: const Duration(milliseconds: 500),
                     child: Text(
-                      '© ${DateTime.now().year} نظام الخطابات الرسمية',
+                      '© ${DateTime.now().year} منصة إصدار الخطابات الرسمية',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.6),
                         fontSize: 12,
                         fontFamily: 'Cairo',
                       ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // زر تسجيل جديد
+                  FadeInUp(
+                    delay: const Duration(milliseconds: 900),
+                    duration: const Duration(milliseconds: 500),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'ليس لديك حساب؟',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.8),
+                            fontSize: 14,
+                            fontFamily: 'Cairo',
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => context.push(AppRoutes.register),
+                          child: const Text(
+                            'سجل الآن',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Cairo',
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

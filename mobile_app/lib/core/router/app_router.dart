@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
+import '../../features/company/presentation/pages/organization_setup_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../features/letters/presentation/pages/letters_page.dart';
 import '../../features/letters/presentation/pages/letter_create_page.dart';
@@ -27,6 +29,8 @@ import '../../features/templates/presentation/pages/template_initial_setup_page.
 class AppRoutes {
   static const String splash = '/';
   static const String login = '/login';
+  static const String register = '/register';
+  static const String organizationSetup = '/organization-setup';
   static const String main = '/main';
   static const String dashboard = '/dashboard';
   static const String letters = '/letters';
@@ -91,6 +95,52 @@ class AppRouter {
           child: const LoginPage(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      ),
+
+      // Register
+      GoRoute(
+        path: AppRoutes.register,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const RegisterPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 1),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                ),
+              ),
+              child: child,
+            );
+          },
+        ),
+      ),
+
+      // Organization Setup (First time setup)
+      GoRoute(
+        path: AppRoutes.organizationSetup,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const OrganizationSetupPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 1),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                ),
+              ),
+              child: child,
+            );
           },
         ),
       ),
