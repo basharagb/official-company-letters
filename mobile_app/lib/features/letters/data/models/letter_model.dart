@@ -23,23 +23,38 @@ class LetterModel extends Letter {
 
   factory LetterModel.fromJson(Map<String, dynamic> json) {
     return LetterModel(
-      id: json['id'],
+      id: _parseInt(json['id']),
       referenceNumber: json['reference_number'],
       subject: json['subject'] ?? '',
       content: json['content'] ?? '',
       status: json['status'] ?? 'draft',
       recipientName: json['recipient_name'],
       recipientTitle: json['recipient_title'],
-      organizationName: json['organization_name'],
-      templateId: json['template_id'],
+      organizationName:
+          json['recipient_organization'] ?? json['organization_name'],
+      templateId: _parseIntOrNull(json['template_id']),
       templateName: json['template_name'],
       gregorianDate: json['gregorian_date'],
       hijriDate: json['hijri_date'],
       pdfPath: json['pdf_path'],
       shareToken: json['share_token'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updated_at'] ?? '') ?? DateTime.now(),
     );
+  }
+
+  static int _parseInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  static int? _parseIntOrNull(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   Map<String, dynamic> toJson() {

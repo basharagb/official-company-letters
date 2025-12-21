@@ -85,6 +85,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'organizations_fab',
         onPressed: () => _showOrganizationDialog(),
         backgroundColor: AppColors.primary,
         child: const Icon(Iconsax.add, color: Colors.white),

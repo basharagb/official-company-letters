@@ -1,5 +1,35 @@
 # نظام إصدار الخطابات الرسمية للشركات
 
+## 🆕 تحسين عرض الباركود في صفحة تفاصيل الخطاب (Dec 21, 2025)
+
+### المهام المطلوبة:
+- [x] إنشاء فرع `feature/barcode-display-enhancement`
+- [x] تحديث صفحة تفاصيل الخطاب في الموبايل لعرض الباركود مع الرقم الصادر والتاريخ والموضوع
+- [x] إضافة خيار تحديد موقع الباركود (يمين/يسار)
+- [x] تحديث صفحة عرض الخطاب في الويب بنفس الميزة
+- [x] إضافة Barcode Facade في Laravel config
+- [x] التأكد من تحميل إعدادات الباركود عند أول تشغيل للتطبيق
+- [ ] اختبار وcommit التغييرات
+
+### الملفات المعدلة:
+- `mobile_app/lib/features/letters/presentation/pages/letter_details_page.dart` - إضافة قسم الباركود
+- `mobile_app/lib/core/services/barcode_service.dart` - تحسين توليد الباركود
+- `resources/views/letters/show.blade.php` - إضافة قسم الباركود في الويب
+- `config/app.php` - إضافة Barcode Facades
+
+### الترتيب المطلوب للعرض:
+1. الباركود (يحتوي على الرقم الصادر)
+2. الرقم الصادر
+3. التاريخ الهجري
+4. التاريخ الميلادي
+5. الموضوع
+
+### الإعدادات المتاحة:
+- موقع الباركود: يمين أو يسار الورقة
+- إظهار/إخفاء: الباركود، الرقم الصادر، التاريخ الهجري، التاريخ الميلادي، الموضوع
+
+---
+
 ## 🆕 تحسينات تطبيق الموبايل (Dec 21, 2025)
 
 ### المهام المطلوبة:
@@ -728,3 +758,9 @@ flutter run
 
 - **English-only Legal Pages**: Updated `/privacy-policy` and `/terms-conditions` web pages to be English-only for App Store / Google Play submission requirements.
 - **Test Coverage**: Added `tests/Feature/LegalPagesTest.php` to assert both pages return `200` and contain English headings.
+
+### 🔧 Dec 21, 2025 - Hero Tag & Route Fix
+
+- **Flutter Hero Tag Conflict**: Fixed "multiple heroes share the same tag" error. When multiple pages have `FloatingActionButton` widgets, each must have a unique `heroTag` property to prevent Hero animation conflicts during page transitions. Added unique heroTags: `main_page_fab`, `letters_page_fab`, `letter_subjects_fab`, `recipient_titles_fab`, `recipients_fab`, `organizations_fab`.
+
+- **Missing Route Fix**: Fixed "GoException: no routes for location: /letters/5/edit" error. The `letters_page.dart` was navigating to `/letters/:id/edit` but the route was defined as `/letters/:id`. Changed navigation from `/letters/${letter['id']}/edit` to `/letters/${letter['id']}`.

@@ -30,31 +30,71 @@
             </span>
           </div>
           <div class="card-body">
+            <!-- قسم الباركود مع الرقم الصادر والتاريخ والموضوع -->
+            @php
+              $company = auth()->user()->company;
+              $barcodePosition = $company->barcode_position ?? 'right';
+              $showBarcode = $company->show_barcode ?? true;
+              $showRefNumber = $company->show_reference_number ?? true;
+              $showHijriDate = $company->show_hijri_date ?? true;
+              $showGregorianDate = $company->show_gregorian_date ?? true;
+              $showSubjectInHeader = $company->show_subject_in_header ?? true;
+            @endphp
+
+            <div class="d-flex mb-4 {{ $barcodePosition === 'right' ? 'justify-content-end' : 'justify-content-start' }}">
+              <div class="barcode-section text-center p-3 bg-light rounded border" style="min-width: 180px;">
+                @if($showBarcode)
+                  <div class="barcode-image mb-2 p-2 bg-white rounded">
+                    {!! DNS1D::getBarcodeHTML($letter->reference_number, 'C128', 1.5, 45) !!}
+                  </div>
+                @endif
+
+                @if($showRefNumber)
+                  <div class="reference-number mb-2">
+                    <span class="badge bg-primary px-3 py-2 fs-6">{{ $letter->reference_number }}</span>
+                  </div>
+                @endif
+
+                @if($showHijriDate || $showGregorianDate)
+                  <div class="dates small text-muted">
+                    @if($showHijriDate)
+                      <div>{{ $letter->hijri_date }}</div>
+                    @endif
+                    @if($showGregorianDate)
+                      <div>{{ $letter->gregorian_date?->format('Y/m/d') }}</div>
+                    @endif
+                  </div>
+                @endif
+
+                @if($showSubjectInHeader && $letter->subject)
+                  <div class="subject-preview mt-2">
+                    <small class="text-primary fw-bold" style="font-size: 11px;">
+                      {{ Str::limit($letter->subject, 35) }}
+                    </small>
+                  </div>
+                @endif
+              </div>
+            </div>
+
+            <hr>
+
             <!-- معلومات الخطاب -->
             <div class="row mb-4">
-              <div class="col-md-6">
-                <p class="mb-2">
-                  <strong><i class="bi bi-hash"></i> رقم الصادر:</strong>
-                  <span class="text-primary fw-bold">{{ $letter->reference_number }}</span>
-                </p>
-                <p class="mb-2">
-                  <strong><i class="bi bi-calendar3"></i> التاريخ الميلادي:</strong>
-                  {{ $letter->gregorian_date?->format('Y/m/d') }}
-                </p>
-                <p class="mb-2">
-                  <strong><i class="bi bi-calendar-week"></i> التاريخ الهجري:</strong>
-                  {{ $letter->hijri_date }}
-                </p>
-              </div>
               <div class="col-md-6">
                 <p class="mb-2">
                   <strong><i class="bi bi-person"></i> المستلم:</strong>
                   {{ $letter->recipient_name ?? 'غير محدد' }}
                 </p>
                 <p class="mb-2">
+                  <strong><i class="bi bi-person-badge"></i> الصفة:</strong>
+                  {{ $letter->recipient_title ?? 'غير محدد' }}
+                </p>
+                <p class="mb-2">
                   <strong><i class="bi bi-building"></i> الجهة:</strong>
                   {{ $letter->recipient_organization ?? 'غير محدد' }}
                 </p>
+              </div>
+              <div class="col-md-6">
                 <p class="mb-2">
                   <strong><i class="bi bi-person-badge"></i> المُصدر:</strong>
                   {{ $letter->author->name }}
