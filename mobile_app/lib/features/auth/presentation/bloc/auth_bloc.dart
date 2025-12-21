@@ -75,7 +75,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           key: AppConfig.tokenKey,
           value: authResponse.token,
         );
-        emit(AuthAuthenticated(user: authResponse.user));
+
+        // التحقق من حالة إعداد المؤسسة
+        final needsSetup = authResponse.user.companyName == null ||
+            authResponse.user.companyName!.isEmpty;
+
+        emit(AuthAuthenticated(
+          user: authResponse.user,
+          needsOrganizationSetup: needsSetup,
+        ));
       },
     );
   }

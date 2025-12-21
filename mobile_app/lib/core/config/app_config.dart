@@ -3,7 +3,10 @@ class AppConfig {
   AppConfig._();
 
   // App Info
-  static const String appName = 'نظام الخطابات';
+  static const String appName = 'منصة الخطابات';
+  static const String appNameFull = 'منصة إصدار الخطابات الرسمية';
+  static const String appDescription =
+      'منصة متكاملة لإصدار وإدارة الخطابات الرسمية للمؤسسات والإدارات والجهات المختلفة';
   static const String appVersion = '1.0.0';
 
   // API Configuration

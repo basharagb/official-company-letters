@@ -36,7 +36,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
       appBar: AppBar(
         title: FadeInDown(
           duration: const Duration(milliseconds: 500),
-          child: const Text('قوالب الخطابات'),
+          child: const Text('الورق الرسمي والقوالب'),
         ),
         actions: [
           IconButton(
@@ -606,7 +606,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
             ),
             SizedBox(height: 20.h),
             Text(
-              'إضافة قالب جديد',
+              'إضافة ورق رسمي أو قالب',
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
@@ -615,7 +615,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
             ),
             SizedBox(height: 8.h),
             Text(
-              'اختر طريقة إضافة القالب',
+              'اختر طريقة الإضافة',
               style: TextStyle(
                 fontSize: 14.sp,
                 color: Colors.grey.shade600,
@@ -624,7 +624,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
             ),
             SizedBox(height: 20.h),
 
-            // خيار رفع ورق رسمي (سكان)
+            // خيار تحميل/رفع الورق الرسمي
             ListTile(
               leading: Container(
                 padding: EdgeInsets.all(10.w),
@@ -632,10 +632,10 @@ class _TemplatesPageState extends State<TemplatesPage> {
                   color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: Icon(Iconsax.scan, color: AppColors.primary),
+                child: Icon(Iconsax.document_upload, color: AppColors.primary),
               ),
-              title: const Text('رفع ورق رسمي (سكان)'),
-              subtitle: const Text('مسح ضوئي أو رفع PDF للورق الرسمي'),
+              title: const Text('تحميل الورق الرسمي'),
+              subtitle: const Text('رفع صورة أو PDF للورق الرسمي'),
               trailing: const Icon(Iconsax.arrow_left_2),
               onTap: () {
                 Navigator.pop(context);
@@ -644,27 +644,220 @@ class _TemplatesPageState extends State<TemplatesPage> {
             ),
             const Divider(),
 
-            // خيار إنشاء قالب نصي
+            // خيار إنشاء قالب يدوي
             ListTile(
               leading: Container(
                 padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: Colors.orange.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: Icon(Iconsax.document_text, color: Colors.green),
+                child: Icon(Iconsax.edit_2, color: Colors.orange),
               ),
-              title: const Text('إنشاء قالب نصي'),
-              subtitle: const Text('قالب نصي بسيط للخطابات'),
+              title: const Text('إنشاء قالب يدوي'),
+              subtitle: const Text('إدخال بيانات القالب يدوياً'),
               trailing: const Icon(Iconsax.arrow_left_2),
               onTap: () {
                 Navigator.pop(context);
                 _showCreateTemplateDialog();
               },
             ),
+            const Divider(),
+
+            // خيار إضافة الختم والتوقيع
+            ListTile(
+              leading: Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(Iconsax.verify, color: Colors.purple),
+              ),
+              title: const Text('إضافة الختم والتوقيع'),
+              subtitle: const Text('رفع صورة الختم والتوقيع'),
+              trailing: const Icon(Iconsax.arrow_left_2),
+              onTap: () {
+                Navigator.pop(context);
+                _showStampSignatureDialog();
+              },
+            ),
             SizedBox(height: 20.h),
           ],
         ),
+      ),
+    );
+  }
+
+  /// عرض نافذة إضافة الختم والتوقيع
+  void _showStampSignatureDialog() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) => Container(
+        padding: EdgeInsets.all(20.w),
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+            ),
+            SizedBox(height: 20.h),
+            Center(
+              child: Text(
+                'إضافة الختم والتوقيع',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Cairo',
+                ),
+              ),
+            ),
+            SizedBox(height: 24.h),
+
+            // رفع التوقيع
+            Text(
+              'التوقيع',
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Cairo',
+              ),
+            ),
+            SizedBox(height: 8.h),
+            InkWell(
+              onTap: () => _uploadSignature(),
+              borderRadius: BorderRadius.circular(12.r),
+              child: Container(
+                width: double.infinity,
+                height: 100.h,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: Colors.grey.shade300, style: BorderStyle.solid),
+                  borderRadius: BorderRadius.circular(12.r),
+                  color: Colors.grey.shade50,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Iconsax.gallery_add, size: 32.sp, color: Colors.grey),
+                    SizedBox(height: 8.h),
+                    Text(
+                      'اضغط لرفع صورة التوقيع',
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 12.sp,
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: 20.h),
+
+            // رفع الختم
+            Text(
+              'الختم',
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Cairo',
+              ),
+            ),
+            SizedBox(height: 8.h),
+            InkWell(
+              onTap: () => _uploadStamp(),
+              borderRadius: BorderRadius.circular(12.r),
+              child: Container(
+                width: double.infinity,
+                height: 100.h,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: Colors.grey.shade300, style: BorderStyle.solid),
+                  borderRadius: BorderRadius.circular(12.r),
+                  color: Colors.grey.shade50,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Iconsax.gallery_add, size: 32.sp, color: Colors.grey),
+                    SizedBox(height: 8.h),
+                    Text(
+                      'اضغط لرفع صورة الختم',
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 12.sp,
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const Spacer(),
+
+            // ملاحظة
+            Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: AppColors.info.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Row(
+                children: [
+                  Icon(Iconsax.info_circle, color: AppColors.info, size: 20.sp),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      'سيتم إضافة الختم والتوقيع تلقائياً على جميع الخطابات',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.info,
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// رفع صورة التوقيع
+  Future<void> _uploadSignature() async {
+    // TODO: Implement signature upload using file_picker
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('جاري تحميل التوقيع...'),
+        backgroundColor: AppColors.info,
+      ),
+    );
+  }
+
+  /// رفع صورة الختم
+  Future<void> _uploadStamp() async {
+    // TODO: Implement stamp upload using file_picker
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('جاري تحميل الختم...'),
+        backgroundColor: AppColors.info,
       ),
     );
   }

@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/network/api_client.dart';
@@ -570,6 +572,8 @@ class _LetterCreatePageState extends State<LetterCreatePage> {
       final response = await apiClient.post('/letters', data: data);
 
       if (response.data['success'] == true) {
+        final letterId = response.data['data']?['id'];
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -577,7 +581,13 @@ class _LetterCreatePageState extends State<LetterCreatePage> {
             backgroundColor: AppColors.success,
           ),
         );
-        context.pop();
+
+        if (!isDraft && letterId != null) {
+          // الانتقال لصفحة تفاصيل الخطاب مع خيارات المشاركة
+          _showShareOptions(letterId);
+        } else {
+          context.pop();
+        }
       } else {
         throw Exception(response.data['message'] ?? 'فشل في حفظ الخطاب');
       }
@@ -599,5 +609,235 @@ class _LetterCreatePageState extends State<LetterCreatePage> {
 
   void _issueLetter() {
     _createLetter(isDraft: false);
+  }
+
+  /// عرض خيارات المشاركة بعد إصدار الخطاب
+  void _showShareOptions(int letterId) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) => Container(
+        padding: EdgeInsets.all(20.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(height: 20.h),
+
+            // أيقونة النجاح
+            Container(
+              width: 60.w,
+              height: 60.h,
+              decoration: BoxDecoration(
+                color: AppColors.success.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Iconsax.tick_circle,
+                color: AppColors.success,
+                size: 32.sp,
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            Text(
+              'تم إصدار الخطاب بنجاح!',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Cairo',
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'اختر طريقة المشاركة',
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.grey.shade600,
+                fontFamily: 'Cairo',
+              ),
+            ),
+            SizedBox(height: 24.h),
+
+            // خيارات المشاركة
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildShareOption(
+                  icon: Iconsax.document_download,
+                  label: 'تحميل PDF',
+                  color: AppColors.primary,
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.push('/letters/$letterId');
+                  },
+                ),
+                _buildShareOption(
+                  icon: Icons.message,
+                  label: 'واتساب',
+                  color: Colors.green,
+                  onTap: () {
+                    Navigator.pop(context);
+                    _shareToWhatsApp(letterId);
+                  },
+                ),
+                _buildShareOption(
+                  icon: Iconsax.sms,
+                  label: 'إيميل',
+                  color: Colors.blue,
+                  onTap: () {
+                    Navigator.pop(context);
+                    _shareToEmail(letterId);
+                  },
+                ),
+                _buildShareOption(
+                  icon: Iconsax.share,
+                  label: 'مشاركة',
+                  color: Colors.orange,
+                  onTap: () {
+                    Navigator.pop(context);
+                    _shareLink(letterId);
+                  },
+                ),
+              ],
+            ),
+
+            SizedBox(height: 24.h),
+
+            // زر عرض الخطاب
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  context.push('/letters/$letterId');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                ),
+                child: const Text('عرض الخطاب'),
+              ),
+            ),
+
+            SizedBox(height: 12.h),
+
+            // زر العودة للقائمة
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  context.pop();
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                ),
+                child: const Text('العودة للقائمة'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShareOption({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: Container(
+        padding: EdgeInsets.all(12.w),
+        child: Column(
+          children: [
+            Container(
+              width: 50.w,
+              height: 50.h,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Icon(icon, color: color, size: 24.sp),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11.sp,
+                fontFamily: 'Cairo',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// مشاركة عبر الواتساب
+  Future<void> _shareToWhatsApp(int letterId) async {
+    final text =
+        'خطاب رقم: ${_subjectController.text}\nرابط: https://emsg.elite-center-ld.com/share/$letterId';
+    final uri = Uri.parse('https://wa.me/?text=${Uri.encodeComponent(text)}');
+
+    try {
+      final canLaunch = await canLaunchUrl(uri);
+      if (canLaunch) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('لا يمكن فتح الواتساب')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('خطأ: $e')),
+      );
+    }
+  }
+
+  /// مشاركة عبر الإيميل
+  Future<void> _shareToEmail(int letterId) async {
+    final subject = _subjectController.text;
+    final body =
+        'مرفق لكم الخطاب\nرابط: https://emsg.elite-center-ld.com/share/$letterId';
+    final uri = Uri.parse(
+        'mailto:?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(body)}');
+
+    try {
+      final canLaunch = await canLaunchUrl(uri);
+      if (canLaunch) {
+        await launchUrl(uri);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('لا يمكن فتح البريد الإلكتروني')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('خطأ: $e')),
+      );
+    }
+  }
+
+  /// مشاركة الرابط
+  void _shareLink(int letterId) {
+    Share.share(
+      'رابط الخطاب: https://emsg.elite-center-ld.com/share/$letterId',
+      subject: _subjectController.text,
+    );
   }
 }
