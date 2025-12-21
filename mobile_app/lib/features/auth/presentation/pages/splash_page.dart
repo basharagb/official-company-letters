@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/router/app_router.dart';
@@ -28,15 +29,33 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
     // الانتقال بعد 3 ثواني
     Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        final authState = context.read<AuthBloc>().state;
-        if (authState is AuthAuthenticated) {
-          context.go(AppRoutes.main);
-        } else {
-          context.go(AppRoutes.login);
-        }
-      }
+      _navigateToNextScreen();
     });
+  }
+
+  Future<void> _navigateToNextScreen() async {
+    if (!mounted) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    final isInitialSetupCompleted =
+        prefs.getBool('initial_setup_completed') ?? false;
+    final authState = context.read<AuthBloc>().state;
+
+    if (!mounted) return;
+
+    if (authState is AuthAuthenticated) {
+      // المستخدم مسجل دخول
+      if (!isInitialSetupCompleted) {
+        // أول استخدام - عرض إعدادات الورق الرسمي
+        context.go(AppRoutes.templateInitialSetup);
+      } else {
+        // الذهاب للصفحة الرئيسية
+        context.go(AppRoutes.main);
+      }
+    } else {
+      // الذهاب لتسجيل الدخول
+      context.go(AppRoutes.login);
+    }
   }
 
   @override

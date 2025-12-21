@@ -10,7 +10,7 @@ class BarcodeService {
       // إنشاء صورة الباركود
       final recorder = ui.PictureRecorder();
       final canvas = ui.Canvas(recorder);
-      const size = Size(200, 80);
+      const size = Size(200, 60);
 
       // رسم خلفية بيضاء
       final backgroundPaint = Paint()..color = Colors.white;
@@ -20,17 +20,44 @@ class BarcodeService {
       // رسم الباركود باستخدام مكتبة barcode
       final paint = Paint()..color = Colors.black;
 
-      // رسم باركود مبسط يدوياً
-      final barWidth = size.width / value.length;
-      for (int i = 0; i < value.length; i++) {
-        // نمط بسيط للباركود بناءً على قيمة الأحرف
-        final charCode = value.codeUnitAt(i);
-        if (charCode % 3 == 0 || charCode % 5 == 0) {
+      // رسم باركود Code128 مبسط
+      final barWidth = size.width / (value.length * 11 + 35);
+      double x = 5;
+
+      // Start pattern
+      for (int i = 0; i < 6; i++) {
+        if (i % 2 == 0) {
           canvas.drawRect(
-            Rect.fromLTWH(i * barWidth, 0, barWidth * 0.8, size.height),
+            Rect.fromLTWH(x, 5, barWidth * 2, size.height - 10),
             paint,
           );
         }
+        x += barWidth * 2;
+      }
+
+      // Data bars
+      for (int i = 0; i < value.length; i++) {
+        final charCode = value.codeUnitAt(i);
+        for (int j = 0; j < 11; j++) {
+          if ((charCode + j) % 2 == 0) {
+            canvas.drawRect(
+              Rect.fromLTWH(x, 5, barWidth, size.height - 10),
+              paint,
+            );
+          }
+          x += barWidth;
+        }
+      }
+
+      // End pattern
+      for (int i = 0; i < 7; i++) {
+        if (i % 2 == 0) {
+          canvas.drawRect(
+            Rect.fromLTWH(x, 5, barWidth * 2, size.height - 10),
+            paint,
+          );
+        }
+        x += barWidth * 2;
       }
 
       // تحويل إلى صورة

@@ -128,6 +128,7 @@ class _LettersPageState extends State<LettersPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'letters_page_fab',
         onPressed: () => context.push(AppRoutes.letterCreate),
         backgroundColor: AppColors.primary,
         icon: const Icon(Iconsax.add, color: Colors.white),
@@ -316,7 +317,7 @@ class _LettersPageState extends State<LettersPage> {
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
         child: InkWell(
-          onTap: () => context.push('/letters/${letter['id']}/edit'),
+          onTap: () => context.push('/letters/${letter['id']}'),
           borderRadius: BorderRadius.circular(12.r),
           child: Padding(
             padding: EdgeInsets.all(16.w),

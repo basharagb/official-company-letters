@@ -85,6 +85,7 @@ class _RecipientTitlesPageState extends State<RecipientTitlesPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'recipient_titles_fab',
         onPressed: () => _showRecipientTitleDialog(),
         backgroundColor: AppColors.primary,
         child: const Icon(Iconsax.add, color: Colors.white),

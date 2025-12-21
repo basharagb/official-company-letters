@@ -17,6 +17,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
 
   final List<_NavItem> _navItems = [
@@ -55,7 +56,7 @@ class _MainPageState extends State<MainPage> {
   void _onItemTapped(int index) {
     if (index == 4) {
       // فتح القائمة الجانبية
-      Scaffold.of(context).openEndDrawer();
+      _scaffoldKey.currentState?.openEndDrawer();
       return;
     }
 
@@ -72,6 +73,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: widget.child,
       endDrawer: _buildDrawer(),
       bottomNavigationBar: _buildBottomNav(),
@@ -154,6 +156,7 @@ class _MainPageState extends State<MainPage> {
     return ZoomIn(
       duration: const Duration(milliseconds: 300),
       child: FloatingActionButton(
+        heroTag: 'main_page_fab',
         onPressed: () => context.push(AppRoutes.letterCreate),
         backgroundColor: AppColors.primary,
         elevation: 4,

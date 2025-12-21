@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:iconsax/iconsax.dart';
@@ -7,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/services/pdf_service.dart';
+import '../../../../core/services/barcode_service.dart';
 import '../../../company/data/datasources/company_remote_datasource.dart';
 import '../../data/datasources/letters_remote_datasource.dart';
 
@@ -240,30 +242,10 @@ class _LetterDetailsPageState extends State<LetterDetailsPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Header
+                            // Header with Status Badge
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Flexible(
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 8,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primary,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      refNumber,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
@@ -289,20 +271,17 @@ class _LetterDetailsPageState extends State<LetterDetailsPage> {
                               ],
                             ),
 
-                            const SizedBox(height: 20),
-                            const Divider(),
                             const SizedBox(height: 16),
 
-                            // التواريخ
-                            _buildInfoRow(
-                              icon: Iconsax.calendar,
-                              label: 'التاريخ الميلادي',
-                              value: gregorianDate,
-                            ),
-                            _buildInfoRow(
-                              icon: Iconsax.calendar_1,
-                              label: 'التاريخ الهجري',
-                              value: hijriDate,
+                            // قسم الباركود مع الرقم الصادر والتاريخ والموضوع
+                            _buildBarcodeSection(
+                              referenceNumber: refNumber,
+                              hijriDate: hijriDate,
+                              gregorianDate: gregorianDate,
+                              subject: subject,
+                              position:
+                                  _letterheadSettings?['barcode_position'] ??
+                                      'right',
                             ),
 
                             const SizedBox(height: 16),
@@ -480,6 +459,152 @@ class _LetterDetailsPageState extends State<LetterDetailsPage> {
                     fontFamily: 'Cairo',
                   ),
                 ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// قسم الباركود مع الرقم الصادر والتاريخ والموضوع
+  Widget _buildBarcodeSection({
+    required String referenceNumber,
+    required String hijriDate,
+    required String gregorianDate,
+    required String subject,
+    required String position,
+  }) {
+    final isRight = position == 'right';
+    final showBarcode = _letterheadSettings?['show_barcode'] ?? true;
+    final showRefNumber = _letterheadSettings?['show_reference_number'] ?? true;
+    final showHijri = _letterheadSettings?['show_hijri_date'] ?? true;
+    final showGregorian = _letterheadSettings?['show_gregorian_date'] ?? true;
+    final showSubject = _letterheadSettings?['show_subject_in_header'] ?? true;
+
+    return Container(
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment:
+            isRight ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // الباركود
+                if (showBarcode)
+                  FutureBuilder<Uint8List>(
+                    future:
+                        BarcodeService.generateBarcodeImage(referenceNumber),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Image.memory(
+                            snapshot.data!,
+                            width: 140,
+                            height: 45,
+                            fit: BoxFit.contain,
+                          ),
+                        );
+                      }
+                      return Container(
+                        width: 140,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                // الرقم الصادر
+                if (showRefNumber) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      referenceNumber,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                  ),
+                ],
+
+                // التاريخ الهجري والميلادي
+                if (showHijri || showGregorian) ...[
+                  const SizedBox(height: 6),
+                  if (showHijri)
+                    Text(
+                      hijriDate,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey.shade700,
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                  if (showGregorian)
+                    Text(
+                      gregorianDate,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.grey.shade600,
+                        fontFamily: 'Cairo',
+                      ),
+                    ),
+                ],
+
+                // الموضوع
+                if (showSubject && subject.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 160),
+                    child: Text(
+                      subject.length > 30
+                          ? '${subject.substring(0, 30)}...'
+                          : subject,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                        fontFamily: 'Cairo',
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

@@ -6,11 +6,13 @@ import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/di/injection_container.dart' as di;
 import '../../../../core/services/barcode_service.dart';
+import '../../../../core/router/app_router.dart';
 
 /// صفحة الإعداد الأولي للقالب - تظهر عند أول استخدام للتطبيق
 class TemplateInitialSetupPage extends StatefulWidget {
@@ -1206,7 +1208,7 @@ class _TemplateInitialSetupPageState extends State<TemplateInitialSetupPage> {
       }
 
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/main');
+        context.go(AppRoutes.main);
       }
     } catch (e) {
       _showError('حدث خطأ في حفظ الإعدادات: $e');

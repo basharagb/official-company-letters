@@ -88,6 +88,7 @@ class _RecipientsPageState extends State<RecipientsPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'recipients_fab',
         onPressed: () => _showAddRecipientDialog(context),
         backgroundColor: AppColors.primary,
         child: const Icon(Iconsax.add, color: Colors.white),

@@ -85,6 +85,7 @@ class _LetterSubjectsPageState extends State<LetterSubjectsPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'letter_subjects_fab',
         onPressed: () => _showLetterSubjectDialog(),
         backgroundColor: AppColors.primary,
         child: const Icon(Iconsax.add, color: Colors.white),

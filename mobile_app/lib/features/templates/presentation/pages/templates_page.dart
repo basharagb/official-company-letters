@@ -591,99 +591,104 @@ class _TemplatesPageState extends State<TemplatesPage> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
-      builder: (context) => Container(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2.r),
-              ),
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              'إضافة ورق رسمي أو قالب',
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Cairo',
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              'اختر طريقة الإضافة',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: Colors.grey.shade600,
-                fontFamily: 'Cairo',
-              ),
-            ),
-            SizedBox(height: 20.h),
-
-            // خيار تحميل/رفع الورق الرسمي
-            ListTile(
-              leading: Container(
-                padding: EdgeInsets.all(10.w),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10.r),
+      builder: (context) => SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(20.w),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
                 ),
-                child: Icon(Iconsax.document_upload, color: AppColors.primary),
-              ),
-              title: const Text('تحميل الورق الرسمي'),
-              subtitle: const Text('رفع صورة أو PDF للورق الرسمي'),
-              trailing: const Icon(Iconsax.arrow_left_2),
-              onTap: () {
-                Navigator.pop(context);
-                _navigateToTemplateUpload();
-              },
-            ),
-            const Divider(),
-
-            // خيار إنشاء قالب يدوي
-            ListTile(
-              leading: Container(
-                padding: EdgeInsets.all(10.w),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10.r),
+                SizedBox(height: 20.h),
+                Text(
+                  'إضافة ورق رسمي أو قالب',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Cairo',
+                  ),
                 ),
-                child: Icon(Iconsax.edit_2, color: Colors.orange),
-              ),
-              title: const Text('إنشاء قالب يدوي'),
-              subtitle: const Text('إدخال بيانات القالب يدوياً'),
-              trailing: const Icon(Iconsax.arrow_left_2),
-              onTap: () {
-                Navigator.pop(context);
-                _showCreateTemplateDialog();
-              },
-            ),
-            const Divider(),
-
-            // خيار إضافة الختم والتوقيع
-            ListTile(
-              leading: Container(
-                padding: EdgeInsets.all(10.w),
-                decoration: BoxDecoration(
-                  color: Colors.purple.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10.r),
+                SizedBox(height: 8.h),
+                Text(
+                  'اختر طريقة الإضافة',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Colors.grey.shade600,
+                    fontFamily: 'Cairo',
+                  ),
                 ),
-                child: Icon(Iconsax.verify, color: Colors.purple),
-              ),
-              title: const Text('إضافة الختم والتوقيع'),
-              subtitle: const Text('رفع صورة الختم والتوقيع'),
-              trailing: const Icon(Iconsax.arrow_left_2),
-              onTap: () {
-                Navigator.pop(context);
-                _showStampSignatureDialog();
-              },
+                SizedBox(height: 20.h),
+
+                // خيار تحميل/رفع الورق الرسمي
+                ListTile(
+                  leading: Container(
+                    padding: EdgeInsets.all(10.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child:
+                        Icon(Iconsax.document_upload, color: AppColors.primary),
+                  ),
+                  title: const Text('تحميل الورق الرسمي'),
+                  subtitle: const Text('رفع صورة أو PDF للورق الرسمي'),
+                  trailing: const Icon(Iconsax.arrow_left_2),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _navigateToTemplateUpload();
+                  },
+                ),
+                const Divider(),
+
+                // خيار إنشاء قالب يدوي
+                ListTile(
+                  leading: Container(
+                    padding: EdgeInsets.all(10.w),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Icon(Iconsax.edit_2, color: Colors.orange),
+                  ),
+                  title: const Text('إنشاء قالب يدوي'),
+                  subtitle: const Text('إدخال بيانات القالب يدوياً'),
+                  trailing: const Icon(Iconsax.arrow_left_2),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showCreateTemplateDialog();
+                  },
+                ),
+                const Divider(),
+
+                // خيار إضافة الختم والتوقيع
+                ListTile(
+                  leading: Container(
+                    padding: EdgeInsets.all(10.w),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Icon(Iconsax.verify, color: Colors.purple),
+                  ),
+                  title: const Text('إضافة الختم والتوقيع'),
+                  subtitle: const Text('رفع صورة الختم والتوقيع'),
+                  trailing: const Icon(Iconsax.arrow_left_2),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showStampSignatureDialog();
+                  },
+                ),
+                SizedBox(height: 20.h),
+              ],
             ),
-            SizedBox(height: 20.h),
-          ],
+          ),
         ),
       ),
     );

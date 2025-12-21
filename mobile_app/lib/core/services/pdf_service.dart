@@ -363,7 +363,11 @@ class PdfService {
       'ذو الحجة'
     ];
 
-    return '${hijri['day']} ${hijriMonths[hijri['month']! - 1]} ${hijri['year']}هـ';
+    final day = hijri['day'] ?? 1;
+    final month = hijri['month'] ?? 1;
+    final year = hijri['year'] ?? 1446;
+    final monthIndex = (month - 1).clamp(0, 11);
+    return '$day ${hijriMonths[monthIndex]} ${year}هـ';
   }
 
   /// تحويل التاريخ الميلادي إلى يوليان
@@ -383,20 +387,25 @@ class PdfService {
 
   /// تحويل يوليان إلى هجري
   static Map<String, int> _julianToHijri(int jd) {
-    final l = jd - 1948440 + 10632;
-    final n = ((l - 1) / 10631).floor();
-    final l2 = l - 10631 * n + 354;
-    final j = ((10985 - l2) / 5316).floor() * ((50 * l2) / 17719).floor() +
-        (l2 / 5670).floor() * ((43 * l2) / 15238).floor();
-    final l3 = l2 -
-        ((30 - j) / 15).floor() * ((17719 * j) / 50).floor() -
-        (j / 16).floor() * ((15238 * j) / 43).floor() +
-        29;
-    final month = ((24 * l3) / 709).floor();
-    final day = l3 - ((709 * month) / 24).floor();
-    final year = 30 * n + j - 30;
+    try {
+      final l = jd - 1948440 + 10632;
+      final n = ((l - 1) / 10631).floor();
+      final l2 = l - 10631 * n + 354;
+      final j = ((10985 - l2) / 5316).floor() * ((50 * l2) / 17719).floor() +
+          (l2 / 5670).floor() * ((43 * l2) / 15238).floor();
+      final l3 = l2 -
+          ((30 - j) / 15).floor() * ((17719 * j) / 50).floor() -
+          (j / 16).floor() * ((15238 * j) / 43).floor() +
+          29;
+      final month = ((24 * l3) / 709).floor();
+      final day = l3 - ((709 * month) / 24).floor();
+      final year = 30 * n + j - 30;
 
-    return {'year': year, 'month': month, 'day': day};
+      return {'year': year, 'month': month, 'day': day};
+    } catch (e) {
+      // Return default values if calculation fails
+      return {'year': 1446, 'month': 6, 'day': 1};
+    }
   }
 
   /// تنسيق التاريخ الميلادي
