@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
 
 /// الصفحة الرئيسية مع Bottom Navigation
 class MainPage extends StatefulWidget {
@@ -272,6 +274,42 @@ class _MainPageState extends State<MainPage> {
                       onTap: () {
                         Navigator.pop(context);
                         context.go(AppRoutes.letterSubjects);
+                      },
+                    ),
+
+                    // Super Admin Section
+                    BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        if (state is AuthAuthenticated &&
+                            state.user.isSuperAdmin) {
+                          return Column(
+                            children: [
+                              const Divider(color: Colors.white24, height: 32),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 8),
+                                child: Text(
+                                  'إدارة النظام',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.6),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Cairo',
+                                  ),
+                                ),
+                              ),
+                              _buildDrawerItem(
+                                icon: Iconsax.user_octagon,
+                                label: 'إدارة المستخدمين',
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  context.go(AppRoutes.users);
+                                },
+                              ),
+                            ],
+                          );
+                        }
+                        return const SizedBox.shrink();
                       },
                     ),
                   ],

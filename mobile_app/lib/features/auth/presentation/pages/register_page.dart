@@ -20,20 +20,54 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _companyNameController = TextEditingController();
+  final _companyNameEnController = TextEditingController();
+
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
   bool _acceptTerms = false;
 
+  // نوع التسجيل: new_company أو join_company
+  String _registrationType = 'new_company';
+
+  // قائمة الشركات المتاحة
+  List<Map<String, dynamic>> _companies = [];
+  int? _selectedCompanyId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCompanies();
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _companyNameController.dispose();
+    _companyNameEnController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadCompanies() async {
+    try {
+      final apiClient = di.sl<ApiClient>();
+      final response = await apiClient.get('/auth/companies');
+      if (response.data['success'] == true) {
+        setState(() {
+          _companies = List<Map<String, dynamic>>.from(response.data['data']);
+        });
+      }
+    } catch (e) {
+      // تجاهل الخطأ - قائمة الشركات اختيارية
+    }
   }
 
   Future<void> _register() async {
@@ -53,18 +87,34 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
       final apiClient = di.sl<ApiClient>();
-      final response = await apiClient.post('/auth/register', data: {
+
+      final Map<String, dynamic> data = {
         'name': _nameController.text.trim(),
         'email': _emailController.text.trim(),
+        'phone': _phoneController.text.trim(),
         'password': _passwordController.text,
         'password_confirmation': _confirmPasswordController.text,
-      });
+        'registration_type': _registrationType,
+      };
+
+      if (_registrationType == 'new_company') {
+        data['company_name'] = _companyNameController.text.trim();
+        data['company_name_en'] = _companyNameEnController.text.trim();
+      } else {
+        data['company_id'] = _selectedCompanyId;
+      }
+
+      final response = await apiClient.post('/auth/register', data: data);
 
       if (response.data['success'] == true) {
         if (mounted) {
+          String message = _registrationType == 'new_company'
+              ? 'تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول'
+              : 'تم إرسال طلب الانضمام! سيتم إعلامك عند الموافقة';
+
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول'),
+            SnackBar(
+              content: Text(message),
               backgroundColor: AppColors.success,
             ),
           );
@@ -199,6 +249,68 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          // اختيار نوع التسجيل
+                          FadeInRight(
+                            delay: const Duration(milliseconds: 450),
+                            duration: const Duration(milliseconds: 500),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'نوع التسجيل',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Cairo',
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: RadioListTile<String>(
+                                        title: const Text(
+                                          'شركة جديدة',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontFamily: 'Cairo'),
+                                        ),
+                                        value: 'new_company',
+                                        groupValue: _registrationType,
+                                        onChanged: (value) {
+                                          setState(
+                                              () => _registrationType = value!);
+                                        },
+                                        dense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: RadioListTile<String>(
+                                        title: const Text(
+                                          'شركة موجودة',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontFamily: 'Cairo'),
+                                        ),
+                                        value: 'join_company',
+                                        groupValue: _registrationType,
+                                        onChanged: (value) {
+                                          setState(
+                                              () => _registrationType = value!);
+                                        },
+                                        dense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
                           // حقل الاسم
                           FadeInRight(
                             delay: const Duration(milliseconds: 500),
@@ -256,6 +368,135 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
 
                           const SizedBox(height: 16),
+
+                          // حقل رقم الهاتف
+                          FadeInRight(
+                            delay: const Duration(milliseconds: 650),
+                            duration: const Duration(milliseconds: 500),
+                            child: TextFormField(
+                              controller: _phoneController,
+                              keyboardType: TextInputType.phone,
+                              textDirection: TextDirection.ltr,
+                              decoration: InputDecoration(
+                                labelText: 'رقم الهاتف (اختياري)',
+                                hintText: '+966XXXXXXXXX',
+                                prefixIcon: const Icon(Iconsax.call),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // حقول الشركة الجديدة
+                          if (_registrationType == 'new_company') ...[
+                            FadeInRight(
+                              delay: const Duration(milliseconds: 680),
+                              duration: const Duration(milliseconds: 500),
+                              child: TextFormField(
+                                controller: _companyNameController,
+                                decoration: InputDecoration(
+                                  labelText: 'اسم الشركة (عربي)',
+                                  hintText: 'أدخل اسم شركتك',
+                                  prefixIcon: const Icon(Iconsax.building),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (_registrationType == 'new_company' &&
+                                      (value == null || value.isEmpty)) {
+                                    return 'الرجاء إدخال اسم الشركة';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            FadeInRight(
+                              delay: const Duration(milliseconds: 690),
+                              duration: const Duration(milliseconds: 500),
+                              child: TextFormField(
+                                controller: _companyNameEnController,
+                                textDirection: TextDirection.ltr,
+                                decoration: InputDecoration(
+                                  labelText: 'اسم الشركة (إنجليزي - اختياري)',
+                                  hintText: 'Company Name',
+                                  prefixIcon: const Icon(Iconsax.building_4),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+
+                          // اختيار شركة موجودة
+                          if (_registrationType == 'join_company') ...[
+                            FadeInRight(
+                              delay: const Duration(milliseconds: 680),
+                              duration: const Duration(milliseconds: 500),
+                              child: DropdownButtonFormField<int>(
+                                value: _selectedCompanyId,
+                                decoration: InputDecoration(
+                                  labelText: 'اختر الشركة',
+                                  prefixIcon: const Icon(Iconsax.building),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                items: _companies.map((company) {
+                                  return DropdownMenuItem<int>(
+                                    value: company['id'],
+                                    child: Text(company['name']),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() => _selectedCompanyId = value);
+                                },
+                                validator: (value) {
+                                  if (_registrationType == 'join_company' &&
+                                      value == null) {
+                                    return 'الرجاء اختيار الشركة';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            FadeInRight(
+                              delay: const Duration(milliseconds: 690),
+                              duration: const Duration(milliseconds: 500),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Row(
+                                  children: [
+                                    Icon(Iconsax.info_circle,
+                                        color: Colors.orange, size: 20),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        'طلب الانضمام يحتاج موافقة مالك الشركة',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.orange,
+                                          fontFamily: 'Cairo',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
 
                           // حقل كلمة المرور
                           FadeInRight(

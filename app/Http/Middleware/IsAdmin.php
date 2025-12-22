@@ -19,12 +19,10 @@ class IsAdmin
     {
         $user = Auth::user();
         if (is_null($user)) {
-            // user is not logged in
             return redirect()->route('login');
         }
-        elseif ($user->access_level != 1) {
-            // user is not an admin
-            return redirect()->route('home');
+        elseif (!$user->isSuperAdmin() && $user->access_level != 1) {
+            return redirect()->route('dashboard')->with('error', 'ليس لديك صلاحية الوصول');
         }
         return $next($request);
     }

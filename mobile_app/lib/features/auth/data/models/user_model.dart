@@ -11,6 +11,8 @@ class UserModel extends User {
     super.companyId,
     super.companyName,
     super.createdAt,
+    super.isSuperAdmin = false,
+    super.isCompanyOwner = false,
   });
 
   /// من JSON إلى Model
@@ -34,6 +36,10 @@ class UserModel extends User {
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : null,
+      isSuperAdmin:
+          json['is_super_admin'] == 1 || json['is_super_admin'] == true,
+      isCompanyOwner:
+          json['is_company_owner'] == 1 || json['is_company_owner'] == true,
     );
   }
 
@@ -63,6 +69,8 @@ class UserModel extends User {
       'company_id': companyId,
       'company_name': companyName,
       'created_at': createdAt?.toIso8601String(),
+      'is_super_admin': isSuperAdmin,
+      'is_company_owner': isCompanyOwner,
     };
   }
 }

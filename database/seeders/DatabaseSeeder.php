@@ -27,15 +27,18 @@ class DatabaseSeeder extends Seeder
             'last_letter_number' => 0,
         ]);
 
-        // إنشاء المستخدم الافتراضي (المدير)
+        // إنشاء المستخدم الافتراضي (الأدمن الرئيسي)
         User::create([
             'company_id' => $company->id,
             'name' => 'مدير النظام',
             'email' => 'admin@letters.sa',
-            'password' => Hash::make('123456'),
+            'password' => Hash::make('Adm!n@L3tt3rs#2024$Str0ng'),
             'job_title' => 'مدير النظام',
             'role' => 'admin',
             'access_level' => 1,
+            'is_super_admin' => true,
+            'is_company_owner' => true,
+            'status' => 'approved',
         ]);
 
         // إنشاء اشتراك تجريبي
