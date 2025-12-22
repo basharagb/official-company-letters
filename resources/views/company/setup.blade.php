@@ -1,27 +1,51 @@
 @extends('layouts.template')
-@section('title', 'إعداد الشركة')
+@section('title', 'إعداد الشركة - مرحباً بك!')
 
 @section('content')
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-9">
+            <!-- عنوان الترحيب -->
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-primary">
+                    <i class="bi bi-rocket-takeoff"></i> مرحباً بك في نظام إصدار الخطابات الرسمية
+                </h2>
+                <p class="text-muted">دعنا نقوم بإعداد شركتك في 3 خطوات بسيطة</p>
+            </div>
+
             <!-- شريط التقدم -->
             <div class="mb-5">
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="badge bg-primary rounded-pill px-3 py-2">1. البيانات الأساسية</span>
-                    <span class="badge {{ $step >= 2 ? 'bg-primary' : 'bg-secondary' }} rounded-pill px-3 py-2">2. الورق الرسمي</span>
-                    <span class="badge {{ $step >= 3 ? 'bg-primary' : 'bg-secondary' }} rounded-pill px-3 py-2">3. إعدادات الباركود</span>
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="text-center" style="flex: 1;">
+                        <div class="badge {{ $step >= 1 ? 'bg-primary' : 'bg-secondary' }} rounded-circle mb-2" style="width: 50px; height: 50px; line-height: 50px; font-size: 20px;">
+                            {{ $step > 1 ? '✓' : '1' }}
+                        </div>
+                        <div class="small fw-bold">البيانات الأساسية</div>
+                    </div>
+                    <div class="text-center" style="flex: 1;">
+                        <div class="badge {{ $step >= 2 ? 'bg-primary' : 'bg-secondary' }} rounded-circle mb-2" style="width: 50px; height: 50px; line-height: 50px; font-size: 20px;">
+                            {{ $step > 2 ? '✓' : '2' }}
+                        </div>
+                        <div class="small fw-bold">الورق الرسمي</div>
+                    </div>
+                    <div class="text-center" style="flex: 1;">
+                        <div class="badge {{ $step >= 3 ? 'bg-primary' : 'bg-secondary' }} rounded-circle mb-2" style="width: 50px; height: 50px; line-height: 50px; font-size: 20px;">
+                            {{ $step >= 3 ? '✓' : '3' }}
+                        </div>
+                        <div class="small fw-bold">إعدادات الباركود</div>
+                    </div>
                 </div>
-                <div class="progress" style="height: 8px;">
-                    <div class="progress-bar" role="progressbar" style="width: {{ ($step / 3) * 100 }}%"></div>
+                <div class="progress" style="height: 10px; border-radius: 10px;">
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ ($step / 3) * 100 }}%; transition: width 0.5s ease;"></div>
                 </div>
             </div>
 
             @if($step == 1)
             <!-- الخطوة 1: البيانات الأساسية -->
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-primary text-white py-3">
-                    <h4 class="mb-0"><i class="bi bi-building"></i> مرحباً! لنبدأ بإعداد شركتك</h4>
+            <div class="card shadow-lg border-0 animate__animated animate__fadeIn">
+                <div class="card-header bg-gradient text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h4 class="mb-0"><i class="bi bi-building"></i> الخطوة 1: بيانات شركتك الأساسية</h4>
+                    <small class="d-block mt-1 opacity-75">أدخل المعلومات الأساسية لشركتك أو مؤسستك</small>
                 </div>
                 <div class="card-body p-4">
                     <form action="{{ route('company.setup.step1') }}" method="POST" enctype="multipart/form-data">
@@ -111,15 +135,20 @@
 
             @elseif($step == 2)
             <!-- الخطوة 2: رفع الورق الرسمي -->
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-info text-white py-3">
-                    <h4 class="mb-0"><i class="bi bi-file-earmark-pdf"></i> رفع الورق الرسمي</h4>
+            <div class="card shadow-lg border-0 animate__animated animate__fadeIn">
+                <div class="card-header bg-gradient text-white py-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <h4 class="mb-0"><i class="bi bi-file-earmark-pdf"></i> الخطوة 2: رفع الورق الرسمي</h4>
+                    <small class="d-block mt-1 opacity-75">قم بعمل سكان للورق الرسمي الخاص بك (PDF أو صورة)</small>
                 </div>
                 <div class="card-body p-4">
-                    <div class="alert alert-info mb-4">
-                        <i class="bi bi-info-circle"></i>
-                        <strong>نصيحة:</strong> قم بعمل سكان للورق الرسمي الخاص بشركتك (الورقة الفارغة مع الشعار والترويسة) وارفعه هنا.
-                        سيتم استخدامه كخلفية لجميع الخطابات.
+                    <div class="alert alert-info border-0 shadow-sm mb-4">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-lightbulb-fill text-warning fs-3 me-3"></i>
+                            <div>
+                                <strong>نصيحة مهمة:</strong>
+                                <p class="mb-0 mt-1">قم بعمل سكان للورق الرسمي الخاص بشركتك (الورقة الفارغة مع الشعار والترويسة) وارفعه هنا. سيتم استخدامه كخلفية لجميع الخطابات التي تصدرها.</p>
+                            </div>
+                        </div>
                     </div>
 
                     <form action="{{ route('company.setup.step2') }}" method="POST" enctype="multipart/form-data">
@@ -164,9 +193,10 @@
 
             @elseif($step == 3)
             <!-- الخطوة 3: إعدادات الباركود -->
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-success text-white py-3">
-                    <h4 class="mb-0"><i class="bi bi-upc-scan"></i> إعدادات الباركود والمعلومات</h4>
+            <div class="card shadow-lg border-0 animate__animated animate__fadeIn">
+                <div class="card-header bg-gradient text-white py-4" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <h4 class="mb-0"><i class="bi bi-upc-scan"></i> الخطوة 3: إعدادات الباركود والمعلومات</h4>
+                    <small class="d-block mt-1 opacity-75">حدد كيف تريد عرض الباركود والمعلومات على الخطابات</small>
                 </div>
                 <div class="card-body p-4">
                     <form action="{{ route('company.setup.step3') }}" method="POST">
@@ -267,6 +297,27 @@
         </div>
     </div>
 </div>
+
+@push('styles')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<style>
+    .animate__animated {
+        animation-duration: 0.6s;
+    }
+    
+    .bg-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .badge.rounded-circle {
+        transition: all 0.3s ease;
+    }
+    
+    .badge.rounded-circle:hover {
+        transform: scale(1.1);
+    }
+</style>
+@endpush
 
 @push('scripts')
 <script>

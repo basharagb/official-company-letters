@@ -2,17 +2,33 @@
 @section('title', 'إعدادات الورق الرسمي')
 
 @section('content')
-<div class="container">
+<div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-lg-10">
+            <!-- عنوان الصفحة -->
+            <div class="mb-4">
+                <h2 class="fw-bold text-primary">
+                    <i class="bi bi-file-earmark-pdf"></i> إعدادات الورق الرسمي والباركود
+                </h2>
+                <p class="text-muted">قم بتخصيص الورق الرسمي وإعدادات الباركود لخطاباتك</p>
+            </div>
+
+            @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
+
             <form action="{{ route('company.letterhead.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 
                 <!-- رفع الورق الرسمي -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
+                <div class="card shadow-sm mb-4 border-0">
+                    <div class="card-header bg-gradient text-white py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                         <h5 class="mb-0"><i class="bi bi-file-earmark-pdf"></i> الورق الرسمي للشركة</h5>
+                        <small class="d-block mt-1 opacity-75">قم برفع سكان للورق الرسمي الخاص بشركتك</small>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -51,9 +67,10 @@
                 </div>
 
                 <!-- إعدادات الباركود والمعلومات -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-info text-white">
+                <div class="card shadow-sm mb-4 border-0">
+                    <div class="card-header bg-gradient text-white py-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                         <h5 class="mb-0"><i class="bi bi-upc-scan"></i> إعدادات الباركود والمعلومات</h5>
+                        <small class="d-block mt-1 opacity-75">حدد كيف تريد عرض الباركود والمعلومات على الخطابات</small>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -147,9 +164,10 @@
                 </div>
 
                 <!-- معاينة -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-secondary text-white">
+                <div class="card shadow-sm mb-4 border-0">
+                    <div class="card-header bg-gradient text-white py-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                         <h5 class="mb-0"><i class="bi bi-eye"></i> معاينة الترتيب</h5>
+                        <small class="d-block mt-1 opacity-75">شاهد كيف ستظهر المعلومات على الخطاب</small>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -185,13 +203,13 @@
                     </div>
                 </div>
 
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="bi bi-check-circle"></i> حفظ الإعدادات
-                    </button>
-                    <a href="{{ route('company.settings') }}" class="btn btn-secondary btn-lg">
+                <div class="d-flex gap-2 justify-content-between">
+                    <a href="{{ route('company.settings') }}" class="btn btn-outline-secondary btn-lg">
                         <i class="bi bi-arrow-right"></i> رجوع
                     </a>
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                        <i class="bi bi-check-circle"></i> حفظ الإعدادات
+                    </button>
                 </div>
             </form>
         </div>

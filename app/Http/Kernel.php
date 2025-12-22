@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'already_login' => \App\Http\Middleware\AlreadyLogin::class,
         'is_login' => \App\Http\Middleware\IsLogin::class,
         'is_admin' => \App\Http\Middleware\IsAdmin::class,
+        'setup.completed' => \App\Http\Middleware\CheckSetupCompleted::class,
     ];
 }
