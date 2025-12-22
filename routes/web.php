@@ -14,6 +14,7 @@ use App\Http\Controllers\RecipientTitleController;
 use App\Http\Controllers\LetterSubjectController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\JoinRequestController;
+use App\Http\Controllers\UserSettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -161,6 +162,14 @@ Route::middleware(['is_login', 'setup.completed'])->group(function () {
         Route::get('/', [JoinRequestController::class, 'index'])->name('index');
         Route::post('/{joinRequest}/approve', [JoinRequestController::class, 'approve'])->name('approve');
         Route::post('/{joinRequest}/reject', [JoinRequestController::class, 'reject'])->name('reject');
+    });
+
+    // إعدادات المستخدم
+    Route::prefix('user')->name('user.')->group(function () {
+        Route::get('/settings', [UserSettingsController::class, 'index'])->name('settings');
+        Route::put('/profile', [UserSettingsController::class, 'updateProfile'])->name('update-profile');
+        Route::put('/password', [UserSettingsController::class, 'changePassword'])->name('change-password');
+        Route::delete('/account', [UserSettingsController::class, 'deleteAccount'])->name('delete-account');
     });
 
     // لوحة تحكم الأدمن الرئيسي
