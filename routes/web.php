@@ -50,6 +50,15 @@ Route::middleware(['is_login'])->group(function () {
     // تسجيل الخروج
     Route::match(['get', 'post'], '/logout', [LoginController::class, 'logout'])->name('logout');
     
+    // الإعداد الأولي للشركة (بدون middleware setup.completed)
+    Route::get('/company/setup', [CompanyController::class, 'setup'])->name('company.setup');
+    Route::post('/company/setup/step1', [CompanyController::class, 'setupStep1'])->name('company.setup.step1');
+    Route::post('/company/setup/step2', [CompanyController::class, 'setupStep2'])->name('company.setup.step2');
+    Route::post('/company/setup/step3', [CompanyController::class, 'setupStep3'])->name('company.setup.step3');
+});
+
+// مسارات تتطلب إكمال الإعداد الأولي
+Route::middleware(['is_login', 'setup.completed'])->group(function () {
     // لوحة التحكم
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
@@ -61,12 +70,6 @@ Route::middleware(['is_login'])->group(function () {
     // إعدادات الورق الرسمي
     Route::get('/company/letterhead', [CompanyController::class, 'letterheadSettings'])->name('company.letterhead');
     Route::put('/company/letterhead', [CompanyController::class, 'updateLetterhead'])->name('company.letterhead.update');
-    
-    // الإعداد الأولي للشركة
-    Route::get('/company/setup', [CompanyController::class, 'setup'])->name('company.setup');
-    Route::post('/company/setup/step1', [CompanyController::class, 'setupStep1'])->name('company.setup.step1');
-    Route::post('/company/setup/step2', [CompanyController::class, 'setupStep2'])->name('company.setup.step2');
-    Route::post('/company/setup/step3', [CompanyController::class, 'setupStep3'])->name('company.setup.step3');
     
     // الخطابات
     Route::prefix('letters')->name('letters.')->group(function () {
