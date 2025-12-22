@@ -268,6 +268,26 @@
                     <i class="bi bi-envelope"></i> جميع الخطابات
                 </a>
 
+                @if(Auth::user()->isSuperAdmin())
+                    <div class="menu-label">إدارة النظام</div>
+                    <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                        href="{{ route('admin.dashboard') }}">
+                        <i class="bi bi-shield-check"></i> لوحة الأدمن
+                    </a>
+                    <a class="nav-link {{ request()->routeIs('admin.companies') || request()->routeIs('admin.company.details') ? 'active' : '' }}"
+                        href="{{ route('admin.companies') }}">
+                        <i class="bi bi-buildings"></i> الشركات المسجلة
+                    </a>
+                    <a class="nav-link {{ request()->routeIs('admin.letters') ? 'active' : '' }}"
+                        href="{{ route('admin.letters') }}">
+                        <i class="bi bi-envelope-open"></i> جميع الخطابات
+                    </a>
+                    <a class="nav-link {{ request()->routeIs('admin.users') ? 'active' : '' }}"
+                        href="{{ route('admin.users') }}">
+                        <i class="bi bi-people-fill"></i> جميع المستخدمين
+                    </a>
+                @endif
+
                 <div class="menu-label">الإعدادات</div>
                 <a class="nav-link {{ request()->routeIs('templates.*') ? 'active' : '' }}"
                     href="{{ route('templates.index') }}">

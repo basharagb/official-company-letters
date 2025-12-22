@@ -12,6 +12,8 @@ use App\Http\Controllers\RecipientController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RecipientTitleController;
 use App\Http\Controllers\LetterSubjectController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\JoinRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,11 +41,18 @@ Route::get('/terms-conditions', function () {
     return view('pages.terms-conditions');
 })->name('terms-conditions');
 
-// مسارات الضيوف (غير مسجلين) - تسجيل الدخول فقط
+// مسارات الضيوف (غير مسجلين) - تسجيل الدخول والتسجيل
 Route::middleware(['already_login'])->group(function () {
     Route::get('/login', [LoginController::class, 'index'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate'])->name('login.post');
+    
+    // التسجيل الجديد
+    Route::get('/register', [RegisterController::class, 'index'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store'])->name('register.submit');
 });
+
+// API للحصول على قائمة الشركات (عام)
+Route::get('/api/companies', [RegisterController::class, 'getCompanies'])->name('api.companies');
 
 // مسارات المستخدمين المسجلين
 Route::middleware(['is_login'])->group(function () {
@@ -145,5 +154,24 @@ Route::middleware(['is_login', 'setup.completed'])->group(function () {
         Route::put('/{id}', [LetterSubjectController::class, 'update'])->name('update');
         Route::delete('/{id}', [LetterSubjectController::class, 'destroy'])->name('destroy');
         Route::get('/api/all', [LetterSubjectController::class, 'getAll'])->name('api.all');
+    });
+
+    // طلبات الانضمام (لمالك الشركة والأدمن)
+    Route::prefix('join-requests')->name('join-requests.')->group(function () {
+        Route::get('/', [JoinRequestController::class, 'index'])->name('index');
+        Route::post('/{joinRequest}/approve', [JoinRequestController::class, 'approve'])->name('approve');
+        Route::post('/{joinRequest}/reject', [JoinRequestController::class, 'reject'])->name('reject');
+    });
+
+    // لوحة تحكم الأدمن الرئيسي
+    Route::prefix('admin')->name('admin.')->middleware('is_admin')->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+        Route::get('/companies', [AdminController::class, 'companies'])->name('companies');
+        Route::get('/companies/{company}', [AdminController::class, 'companyDetails'])->name('company.details');
+        Route::get('/companies/{company}/edit', [AdminController::class, 'editCompany'])->name('company.edit');
+        Route::put('/companies/{company}', [AdminController::class, 'updateCompany'])->name('company.update');
+        Route::delete('/companies/{company}', [AdminController::class, 'deleteCompany'])->name('company.delete');
+        Route::get('/letters', [AdminController::class, 'allLetters'])->name('letters');
+        Route::get('/users', [AdminController::class, 'users'])->name('users');
     });
 });

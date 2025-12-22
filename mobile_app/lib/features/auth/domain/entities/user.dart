@@ -10,6 +10,8 @@ class User extends Equatable {
   final int? companyId;
   final String? companyName;
   final DateTime? createdAt;
+  final bool isSuperAdmin;
+  final bool isCompanyOwner;
 
   const User({
     required this.id,
@@ -20,19 +22,23 @@ class User extends Equatable {
     this.companyId,
     this.companyName,
     this.createdAt,
+    this.isSuperAdmin = false,
+    this.isCompanyOwner = false,
   });
 
   @override
   List<Object?> get props => [
-    id,
-    name,
-    email,
-    jobTitle,
-    phone,
-    companyId,
-    companyName,
-    createdAt,
-  ];
+        id,
+        name,
+        email,
+        jobTitle,
+        phone,
+        companyId,
+        companyName,
+        createdAt,
+        isSuperAdmin,
+        isCompanyOwner,
+      ];
 }
 
 /// استجابة تسجيل الدخول

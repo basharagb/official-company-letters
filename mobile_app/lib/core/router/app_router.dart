@@ -24,6 +24,7 @@ import '../../features/main/presentation/pages/main_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/templates/presentation/pages/template_upload_page.dart';
 import '../../features/templates/presentation/pages/template_initial_setup_page.dart';
+import '../../features/users/presentation/pages/users_page.dart';
 
 /// مسارات التطبيق
 class AppRoutes {
@@ -48,6 +49,7 @@ class AppRoutes {
   static const String settings = '/settings';
   static const String templateUpload = '/templates/upload';
   static const String templateInitialSetup = '/templates/initial-setup';
+  static const String users = '/users';
 }
 
 /// Router Configuration
@@ -218,6 +220,13 @@ class AppRouter {
             path: AppRoutes.settings,
             pageBuilder: (context, state) =>
                 _buildPageWithAnimation(state, const SettingsPage()),
+          ),
+
+          // Users Management (Super Admin only)
+          GoRoute(
+            path: AppRoutes.users,
+            pageBuilder: (context, state) =>
+                _buildPageWithAnimation(state, const UsersPage()),
           ),
         ],
       ),

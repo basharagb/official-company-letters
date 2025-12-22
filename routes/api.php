@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\RecipientTitleApiController;
 use App\Http\Controllers\Api\LetterSubjectApiController;
 use App\Http\Controllers\Api\SubscriptionApiController;
 use App\Http\Controllers\Api\DashboardApiController;
+use App\Http\Controllers\Api\UserApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,7 @@ use App\Http\Controllers\Api\DashboardApiController;
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/companies', [AuthController::class, 'getCompanies']);
 });
 
 // ==========================================
@@ -149,5 +151,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/subscribe', [SubscriptionApiController::class, 'subscribe']);
         Route::post('/cancel', [SubscriptionApiController::class, 'cancel']);
         Route::get('/history', [SubscriptionApiController::class, 'history']);
+    });
+
+    // ----- إدارة المستخدمين (Super Admin فقط) -----
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserApiController::class, 'index']);
+        Route::get('/companies', [UserApiController::class, 'companies']);
+        Route::get('/{id}', [UserApiController::class, 'show']);
+        Route::put('/{id}', [UserApiController::class, 'update']);
+        Route::delete('/{id}', [UserApiController::class, 'destroy']);
+        Route::get('/{id}/activity-log', [UserApiController::class, 'activityLog']);
+        Route::put('/{id}/status', [UserApiController::class, 'updateStatus']);
     });
 });

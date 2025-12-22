@@ -26,6 +26,9 @@ class User extends Authenticatable
         'password',
         'access_level',
         'role',
+        'is_super_admin',
+        'is_company_owner',
+        'status',
     ];
 
     /**
@@ -77,5 +80,37 @@ class User extends Authenticatable
     public function isManager(): bool
     {
         return $this->role === 'manager' || $this->isAdmin();
+    }
+
+    /**
+     * التحقق من صلاحية الأدمن الرئيسي
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->is_super_admin == true || $this->email === 'admin@letters.sa';
+    }
+
+    /**
+     * التحقق من أن المستخدم هو مالك الشركة
+     */
+    public function isCompanyOwner(): bool
+    {
+        return $this->is_company_owner == true;
+    }
+
+    /**
+     * التحقق من أن المستخدم معتمد
+     */
+    public function isApproved(): bool
+    {
+        return $this->status === 'approved';
+    }
+
+    /**
+     * العلاقة مع طلبات الانضمام
+     */
+    public function joinRequests()
+    {
+        return $this->hasMany(JoinRequest::class);
     }
 }
