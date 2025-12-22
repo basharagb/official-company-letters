@@ -485,6 +485,49 @@ class _UsersPageState extends State<UsersPage> {
                     _buildChip(user.jobTitle!, Colors.teal, Icons.work),
                 ],
               ),
+              SizedBox(height: 12.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _handleMenuAction('view', user),
+                      icon: Icon(Icons.visibility, size: 16.sp),
+                      label: const Text('عرض'),
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        side: BorderSide(color: Colors.blue.withOpacity(0.5)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _handleMenuAction('edit', user),
+                      icon: Icon(Icons.edit, size: 16.sp),
+                      label: const Text('تعديل'),
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        side: BorderSide(color: Colors.orange.withOpacity(0.5)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  if (!user.isSuperAdmin)
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _confirmDelete(user),
+                        icon:
+                            Icon(Icons.delete, size: 16.sp, color: Colors.red),
+                        label: const Text('حذف',
+                            style: TextStyle(color: Colors.red)),
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 8.h),
+                          side: BorderSide(color: Colors.red.withOpacity(0.5)),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ],
           ),
         ),
