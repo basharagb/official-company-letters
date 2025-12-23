@@ -65,18 +65,19 @@ class AppRouter {
       final authState = context.read<AuthBloc>().state;
       final isLoggedIn = authState is AuthAuthenticated;
       final isLoggingIn = state.matchedLocation == AppRoutes.login;
+      final isRegistering = state.matchedLocation == AppRoutes.register;
       final isSplash = state.matchedLocation == AppRoutes.splash;
 
       // إذا كان في صفحة Splash، لا تعيد التوجيه
       if (isSplash) return null;
 
-      // إذا لم يكن مسجل دخول وليس في صفحة تسجيل الدخول
-      if (!isLoggedIn && !isLoggingIn) {
+      // إذا لم يكن مسجل دخول وليس في صفحة تسجيل الدخول أو التسجيل
+      if (!isLoggedIn && !isLoggingIn && !isRegistering) {
         return AppRoutes.login;
       }
 
-      // إذا كان مسجل دخول وفي صفحة تسجيل الدخول
-      if (isLoggedIn && isLoggingIn) {
+      // إذا كان مسجل دخول وفي صفحة تسجيل الدخول أو التسجيل
+      if (isLoggedIn && (isLoggingIn || isRegistering)) {
         return AppRoutes.main;
       }
 

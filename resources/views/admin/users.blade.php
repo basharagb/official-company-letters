@@ -269,19 +269,39 @@
 
 @push('scripts')
 <script>
+// Get CSRF token from meta tag
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+// Helper function to get auth headers for API calls
+function getAuthHeaders() {
+    return {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrfToken,
+        'X-Requested-With': 'XMLHttpRequest'
+    };
+}
+
 function viewUser(userId) {
     const modal = new bootstrap.Modal(document.getElementById('viewUserModal'));
     modal.show();
     
-    fetch(`/api/users/${userId}`, {
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            'Accept': 'application/json'
-        }
+    fetch(`/admin/users/${userId}/details`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+        credentials: 'same-origin'
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
-        const user = data.user;
+        if (!data.success) {
+            throw new Error(data.message || 'خطأ في تحميل البيانات');
+        }
+        const user = data.data;
         document.getElementById('userDetailsContent').innerHTML = `
             <div class="row">
                 <div class="col-md-6">
@@ -306,6 +326,7 @@ function viewUser(userId) {
         `;
     })
     .catch(error => {
+        console.error('Error:', error);
         document.getElementById('userDetailsContent').innerHTML = `
             <div class="alert alert-danger">حدث خطأ في تحميل البيانات</div>
         `;
@@ -313,15 +334,23 @@ function viewUser(userId) {
 }
 
 function editUser(userId) {
-    fetch(`/api/users/${userId}`, {
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            'Accept': 'application/json'
-        }
+    fetch(`/admin/users/${userId}/details`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+        credentials: 'same-origin'
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
-        const user = data.user;
+        if (!data.success) {
+            alert('خطأ: ' + (data.message || 'فشل في تحميل بيانات المستخدم'));
+            return;
+        }
+        const user = data.data;
         document.getElementById('edit_user_id').value = user.id;
         document.getElementById('edit_name').value = user.name;
         document.getElementById('edit_email').value = user.email;
@@ -333,6 +362,10 @@ function editUser(userId) {
         
         const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
         modal.show();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('حدث خطأ في الاتصال');
     });
 }
 
@@ -355,16 +388,18 @@ document.getElementById('editUserForm').addEventListener('submit', function(e) {
         formData.password = password;
     }
     
-    fetch(`/api/users/${userId}`, {
+    fetch(`/admin/users/${userId}`, {
         method: 'PUT',
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
+        headers: getAuthHeaders(),
+        credentials: 'same-origin',
         body: JSON.stringify(formData)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             alert('تم تحديث المستخدم بنجاح');
@@ -374,6 +409,7 @@ document.getElementById('editUserForm').addEventListener('submit', function(e) {
         }
     })
     .catch(error => {
+        console.error('Error:', error);
         alert('حدث خطأ في الاتصال');
     });
 });
@@ -383,14 +419,17 @@ function deleteUser(userId, userName) {
         return;
     }
     
-    fetch(`/api/users/${userId}`, {
+    fetch(`/admin/users/${userId}`, {
         method: 'DELETE',
-        headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            'Accept': 'application/json'
-        }
+        headers: getAuthHeaders(),
+        credentials: 'same-origin'
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             alert('تم حذف المستخدم بنجاح');
@@ -400,9 +439,9 @@ function deleteUser(userId, userName) {
         }
     })
     .catch(error => {
+        console.error('Error:', error);
         alert('حدث خطأ في الاتصال');
     });
 }
 </script>
 @endpush
-@endsection

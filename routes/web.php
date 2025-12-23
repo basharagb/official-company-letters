@@ -182,5 +182,8 @@ Route::middleware(['is_login', 'setup.completed'])->group(function () {
         Route::delete('/companies/{company}', [AdminController::class, 'deleteCompany'])->name('company.delete');
         Route::get('/letters', [AdminController::class, 'allLetters'])->name('letters');
         Route::get('/users', [AdminController::class, 'users'])->name('users');
+        Route::get('/users/{id}/details', [AdminController::class, 'getUserDetails'])->name('users.details');
+        Route::put('/users/{id}', [AdminController::class, 'updateUser'])->name('users.update');
+        Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
     });
 });
