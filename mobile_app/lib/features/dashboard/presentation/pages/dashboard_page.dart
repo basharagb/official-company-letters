@@ -276,7 +276,7 @@ class _DashboardPageState extends State<DashboardPage> {
               const SizedBox(width: 12),
               QuickActionCard(
                 icon: Iconsax.search_normal,
-                label: 'بحث',
+                label: 'الخطابات',
                 color: AppColors.info,
                 onTap: () => context.go(AppRoutes.letters),
               ),
